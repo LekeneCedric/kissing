@@ -1,6 +1,6 @@
-export const API_BASEURL = 'http://192.168.0.101:8000/api';
-export const BASEURL = 'http://192.168.0.101:8000';
-export const SOCKET_SERVER_URL = '192.168.0.101:8000';
+export const API_BASEURL = 'http://192.168.43.129:8000/api';
+export const BASEURL = 'http://192.168.43.129:8000';
+export const SOCKET_SERVER_URL = '192.168.43.129:8000';
 
 export const AuthApiRoutes = {
   signUp: '/users/',

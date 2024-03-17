@@ -89,7 +89,7 @@ export const useRoomView = (): useRoomViewBehaviour => {
           name: iAmSender ? m.receiver.name : user!.username,
           avatar: iAmSender ? setImage(m.receiver.image_path): setImage(user!.image_profile)
         }
-      }];
+      } ];
     }) : null;
     setMessages(mess.sort((a, b) => a.createdAt - b.createdAt));
   }, [messages_]);
