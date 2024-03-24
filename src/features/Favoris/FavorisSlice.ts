@@ -63,7 +63,7 @@ export const FavorisSlice = createSlice({
         (state, {payload}: PayloadAction<GetAllFavorisResponse>) => {
           state.loading = LoadingState.success;
           state.favoris = payload.favoris;
-          state.favoris_list = payload.favoris.length > 0 ? payload.favoris.map(f => f.user!.id) : [];
+          state.favoris_list = payload.favoris.length > 0 ? payload.favoris.map(userdata => userdata.id) : [];
         },
       )
       .addCase(GetAllFavorisAsync.rejected, state => {

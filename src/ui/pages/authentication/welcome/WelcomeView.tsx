@@ -19,7 +19,7 @@ const WelcomeView = ({navigation}) => {
     navigation.push(Routes.Auth.register);
   };
   const handleChangeLanguage = (lang: string) => {
-    console.warn(`set ${lang} as current language !`);
+    // console.warn(`set ${lang} as current language !`);
   };
   return (
     <SafeAreaView style={styles.container}>
@@ -33,15 +33,6 @@ const WelcomeView = ({navigation}) => {
 
       <View style={{marginTop: wp('5%')}} />
 
-      <SelectComponent
-        items={[
-          {key: '1', value: 'en', label: 'anglais'},
-          {key: '2', value: 'fr', label: 'français'},
-        ]}
-        label={'langue'}
-        description={'selection de la langue'}
-        notice={'selection de la langue'}
-      />
       <ButtonView
         isLoading={false}
         label="Se Connecter"

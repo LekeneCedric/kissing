@@ -15,7 +15,7 @@ import {Auth} from '../../../../domain/Auth/Auth';
 import {useToast} from 'react-native-toast-notifications';
 import {
   cleanAuth,
-  setupMyUserProfile,
+  setupMyAuthUserProfile,
 } from '../../../../features/auth/thunks/AuthenticationSlice';
 import {GetMyUserProfileAsync} from '../../../../features/User/Thunks/GetMyUserProfile/GetMyUserProfileAsync';
 import {GetAllInterestAsync} from '../../../../features/Interests/thunks/GetAll/GetAllInterestAsync';
@@ -23,6 +23,8 @@ import {GetMyUserProfileResponse} from '../../../../features/User/Thunks/GetMyUs
 import { GetAllFavorisAsync } from "../../../../features/Favoris/thunks/GetAll/GetAllFavorisAsync.ts";
 import { GetAllFavorisResponse } from "../../../../features/Favoris/thunks/GetAll/GetAllFavorisResponse.ts";
 import { GetAllBlockedUsersAsync } from "../../../../features/Blocked/thunks/GetAll/GetAllBlockedUsersAsync.ts";
+import { setupMyUserProfile } from "../../../../features/User/UserSlice.ts";
+import { setMyId } from "../../../../features/Messages/MessagesSlice.ts";
 
 export interface SignInViewBehaviours {
   form: UseFormReturn<InputSignInForm>;
@@ -47,12 +49,18 @@ export default function   useSignInView(): SignInViewBehaviours {
     if (SignInAsync.fulfilled.match(response)) {
       try {
         const userDataResponse = await dispatch(GetMyUserProfileAsync({}));
-
+        console.log(userDataResponse.payload);
+        dispatch(
+          setupMyAuthUserProfile(
+            userDataResponse.payload as GetMyUserProfileResponse,
+          ),
+        );
         dispatch(
           setupMyUserProfile(
             userDataResponse.payload as GetMyUserProfileResponse,
           ),
         );
+        dispatch(setMyId(userDataResponse.payload!.id!));
         dispatch(GetAllFavorisAsync({}));
         dispatch(GetAllBlockedUsersAsync({}));
         dispatch(GetAllInterestAsync());

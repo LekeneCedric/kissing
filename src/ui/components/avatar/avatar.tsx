@@ -14,8 +14,8 @@ const Avatar = ({imageUri, size, additionalStyle}: props) => {
   useEffect(() => {
     switch (size) {
       case 'chat':
-        setWidth(15);
-        setHeight(15);
+        setWidth('11%');
+        setHeight('11%');
         break;
       case 'small':
         setWidth('25%');
@@ -53,7 +53,8 @@ const Avatar = ({imageUri, size, additionalStyle}: props) => {
             width: wp(width),
             height: wp(height),
             marginRight: size === 'small' ? 10 : 0,
-            marginTop: 10
+            marginTop: 10,
+            borderRadius: size=='chat' ? 100 : 10
           }
         ]
       } />

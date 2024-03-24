@@ -8,7 +8,7 @@ const api = axios.create({
   baseURL: API_BASEURL,
   timeout: 10000, // Specify a timeout (in milliseconds) for requests
   headers: {
-    'Content-Type': 'application/json',
+    'Content-Type': 'multipart/form-data',
     // Add any other default headers you need
   },
 });
@@ -25,7 +25,7 @@ api.interceptors.request.use(
   config => {
     const authToken = selectToken(store.getState());
     if (authToken) {
-      console.log('code2374532fs',authToken);
+      //console.log('code2374532fs',authToken);
       config.headers.Authorization = `Bearer ${authToken}`;
     }
     return config;

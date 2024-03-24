@@ -7,14 +7,19 @@ import Chat from '../pages/Home/chat/Chat';
 import Notifications from '../pages/Home/notifications/Notifications';
 import MatchesList from '../pages/Home/matches/MatchesList';
 import Settings from '../pages/Home/Settings/Settings';
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import { useAppSelector } from "../../app/hook.ts";
 import { selectNbUnreadMessages } from "../../features/Messages/MessagesSelectors.ts";
+import { useEffect } from "react";
+import fontSizes from "../constants/font-sizes.ts";
 
 const Tab = createBottomTabNavigator();
 const HomeScreen = () => {
 
-  const hasUnreadMessages = useAppSelector(selectNbUnreadMessages) > 0;
+  const nbUnreadMessage = useAppSelector(selectNbUnreadMessages);
+  useEffect(() => {
+    //console.log('unread-messages',nbUnreadMessage)
+  }, []);
   return (
     <Tab.Navigator
       screenOptions={{
@@ -42,13 +47,19 @@ const HomeScreen = () => {
             <View style={{position: 'relative'}}>
               <View style={{
                 position: 'absolute',
-                borderRadius: 10,
-                padding: 3,
+                borderRadius: 100,
+                padding: '2%',
+                width: '20%',
+                zIndex: 2,
                 backgroundColor: colors.red,
-                top: 0,
-                right: 0,
-                opacity: hasUnreadMessages ? 1 : 0
-              }} />
+                top: '-1%',
+                right: '-1%',
+                alignItems: 'center',
+                justifyContent: 'center',
+                opacity: nbUnreadMessage > 0 ? 1 : 0
+              }}>
+              <Text style={{fontSize: fontSizes.info, color: colors.light}}>{nbUnreadMessage}</Text>
+              </View>
               <Icon name={icons.chat} size={size} color={color} />
             </View>
           ),

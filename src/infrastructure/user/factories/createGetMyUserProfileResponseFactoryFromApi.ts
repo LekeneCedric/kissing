@@ -4,6 +4,7 @@ export const CreateGetMyUserProfileResponseFactoryFromApi = (
   result: any,
 ): GetMyUserProfileResponse => {
   return {
+    id: result.id,
     user: result.user,
     age: result.age,
     city: result.city,

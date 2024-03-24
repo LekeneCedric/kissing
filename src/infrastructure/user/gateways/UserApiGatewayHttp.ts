@@ -29,18 +29,19 @@ import { UpdateProfileResponse } from "../../../features/User/Thunks/UpdateProfi
 export class UserApiGatewayHttp extends HttpProvider implements UserApiGateway {
   async updateProfile(updateProfileCommand: UpdateProfileCommand): Promise<UpdateProfileResponse> {
     let result: any;
-    const data = {
-      id: updateProfileCommand.id,
-      birthday: updateProfileCommand.birthday,
-      about: updateProfileCommand.about,
-      city: updateProfileCommand.city,
-      sex: updateProfileCommand.sex,
-      search_type: updateProfileCommand.search_type,
-      interests: updateProfileCommand.interests
-    };
-    console.log('code237sdaadas',data);
+    const formdata = new FormData();
+    formdata.append('id',updateProfileCommand.id);
+    formdata.append('birthday',updateProfileCommand.birthday);
+    formdata.append('about',updateProfileCommand.about);
+    formdata.append('city',updateProfileCommand.city);
+    formdata.append('sex',updateProfileCommand.sex);
+    formdata.append('search_type',updateProfileCommand.search_type);
+    updateProfileCommand.interests.map(i => {
+      formdata.append('interests',i);
+    })
+    console.log('code237sdaadas',formdata);
     try {
-      const response = await this.update(UserApiRoutes.updateProfile+'/'+data.id+'/', data);
+      const response = await this.update(UserApiRoutes.updateProfile+'/'+updateProfileCommand.id+'/', formdata);
 
       if (!response.status.toString().startsWith('2')) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -71,16 +72,16 @@ export class UserApiGatewayHttp extends HttpProvider implements UserApiGateway {
     let result: any;
 
     try {
-      const data = {
-        birthday: birthday,
-        about: about,
-        city: city,
-        sex: sex,
-        search_type: search_type,
-        interests: interests,
-      };
-      console.log(data);
-      const response = await this.post(UserApiRoutes.createProfile, data);
+      const formData = new FormData();
+      formData.append('birthday',birthday);
+      formData.append('about',about);
+      formData.append('city',city);
+      formData.append('sex',sex);
+      formData.append('search_type',search_type);
+      interests.map( i => {
+        formData.append('interests', i)
+      })
+      const response = await this.post(UserApiRoutes.createProfile, formData);
 
       if (!response.status.toString().startsWith('2')) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -107,6 +108,7 @@ export class UserApiGatewayHttp extends HttpProvider implements UserApiGateway {
       type: type,
       uri: uri,
     });
+    formData.append('is_main_photo', uploadProfileImageCommand.isMainPhoto)
 
     try {
       const response = await this.upload(
@@ -119,7 +121,7 @@ export class UserApiGatewayHttp extends HttpProvider implements UserApiGateway {
       //@ts-ignore
       result = response.data;
     } catch (e: any) {
-      console.log(e);
+      //console.log(e);
       throw new Error(e.detail);
     }
 
@@ -140,6 +142,7 @@ export class UserApiGatewayHttp extends HttpProvider implements UserApiGateway {
       type: type,
       uri: uri,
     });
+    formData.append('is_main_photo', uploadImageProfileCommand.isMainPhoto)
 
     try {
       const response = await this.upload(
@@ -206,11 +209,12 @@ export class UserApiGatewayHttp extends HttpProvider implements UserApiGateway {
       }
       //@ts-ignore
       result = response.data;
+      console.log('recommendations', result);
     } catch (e: any) {
       console.log(e.detail);
       throw new Error(e.detail);
     }
-
+    // console.warn('recommendations', result);
     return CreateGetRecommendationResponseFactoryFromApi(result);
   }
 
@@ -228,6 +232,7 @@ export class UserApiGatewayHttp extends HttpProvider implements UserApiGateway {
       }
       //@ts-ignore
       result = response.data;
+      console.log('connexion-data', result);
     } catch (e: any) {
       throw new Error(e.detail);
     }
@@ -241,7 +246,7 @@ export class UserApiGatewayHttp extends HttpProvider implements UserApiGateway {
     let result: any;
 
     try {
-      const response = await this.delete(UserApiRoutes.deleteImageProfile+removeProfileImageCommand.imageId);
+      const response = await this.delete(`${UserApiRoutes.deleteImageProfile}/${removeProfileImageCommand.imageId}/`);
       if (!response.status.toString().startsWith('2')) {
         throw new Error(
           'Une érreur est survenue lors du traitement de votre requête , veuillez ressayer plus tard!',
@@ -251,10 +256,10 @@ export class UserApiGatewayHttp extends HttpProvider implements UserApiGateway {
       //@ts-ignore
       result = response.data;
     } catch (e: any) {
-      console.log(e);
+      //console.log(e);
       throw new Error(e.detail);
     }
 
-    return {} as RemoveProfileImageResponse;
+    return {imageId: removeProfileImageCommand.imageId} as RemoveProfileImageResponse;
   }
 }

@@ -7,6 +7,7 @@ export interface Auth {
   token?: string;
   refreshToken?: string;
   user?: User;
+  profileId: number;
   isActivated?: AccountActivatedEnum;
   isCompleteProfile?: CompleteProfileEnum;
   message?: string;

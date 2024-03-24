@@ -10,6 +10,7 @@ import { images } from "../../../../../../constants/images.ts";
 
 const Conversation = (
   {
+    id,
     user,
     last_message,
     nb_unread_messages
@@ -25,58 +26,72 @@ const Conversation = (
             id: user!.id,
             name: user?.name,
             image_path: user?.image_path ?? ""
+          },
+          conversation: {
+            id: id
           }
         });
       }}
       style={{
         flexDirection: "row",
+        alignItems: 'center',
         width: "100%",
         padding: 5,
         backgroundColor: colors.light
       }}>
       <Avatar
-        imageUri={user.image_path ?`${BASEURL}/${user.image_path}`: images.default_image }
-        size={"conversation"}
+        imageUri={user.image_path ?`${BASEURL}${user.image_path}`: images.default_image }
+        size={"chat"}
+        additionalStyle={{flex: 2}}
       />
-      <View
-        style={{
-          flexDirection: "column",
-          justifyContent: "space-between",
-          flex: 6,
-          marginTop: 20,
-          marginBottom: 20,
-          marginLeft: 5,
-        }}>
-        <Text style={{ fontWeight: "bold", fontSize: fontSizes.text }}>{user.name}</Text>
-        <Text numberOfLines={1} style={{fontSize: fontSizes.text, color: colors.gray, top: 5}}>{last_message.message}</Text>
+      <View style={{flexDirection: 'column', flex: 7, left: 5}}>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <Text style={{ fontWeight: "bold", fontSize: fontSizes.text }}>{user.name}</Text>
+          <Text style={{fontSize: fontSizes.text, color: colors.gray}}>
+            {`${new Date(last_message.created_at).toDateString().split(" ")[0]}   ${String(new Date(last_message.created_at).getHours()).padStart(2, '0')}:${String(new Date(last_message.created_at).getMinutes()).padStart(2, '0')}`}
+          </Text>
+        </View>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: '2%'}}>
+          <Text numberOfLines={1} style={{fontSize: fontSizes.text, color: colors.gray, top: 5}}>{last_message.message}</Text>
+          {
+            nb_unread_messages > 0 && (
+              <View
+                style={{
+                  backgroundColor: colors.principal,
+                  borderRadius: 100,
+                  padding: 2,
+                  width: "10%",
+                  top: '1%',
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}>
+                <Text style={{ color: colors.light, textAlign: "center" }}>{nb_unread_messages}</Text>
+              </View>
+            )
+          }
+        </View>
       </View>
-      <View
-        style={{
-          flexDirection: "column",
-          flex: 2,
-          justifyContent: "space-between",
-          marginTop: 20,
-          marginBottom: 20,
-          alignItems: "center"
-        }}>
-        <Text style={{fontSize: fontSizes.text, color: colors.gray}}>
-          {`${new Date(last_message.created_at).toDateString().split(" ")[0]}   ${String(new Date(last_message.created_at).getHours()).padStart(2, '0')}:${String(new Date(last_message.created_at).getMinutes()).padStart(2, '0')}`} </Text>
-        {
-          nb_unread_messages > 0 && (
-            <View
-              style={{
-                backgroundColor: colors.principal,
-                borderRadius: 10,
-                padding: 2,
-                width: "50%",
-                alignItems: "center",
-                justifyContent: "center"
-              }}>
-              <Text style={{ color: colors.light, textAlign: "center" }}>{nb_unread_messages}</Text>
-            </View>
-          )
-        }
-      </View>
+      {/*<View*/}
+      {/*  style={{*/}
+      {/*    flexDirection: "column",*/}
+      {/*    justifyContent: "space-between",*/}
+      {/*    flex: 4,*/}
+      {/*    marginTop: 20,*/}
+      {/*    marginBottom: 20,*/}
+      {/*    marginLeft: 5,*/}
+      {/*  }}>*/}
+      {/*  </View>*/}
+      {/*<View*/}
+      {/*  style={{*/}
+      {/*    flexDirection: "column",*/}
+      {/*    flex: 2,*/}
+      {/*    justifyContent: "space-between",*/}
+      {/*    marginTop: 20,*/}
+      {/*    marginBottom: 20,*/}
+      {/*    alignItems: "flex-end"*/}
+      {/*  }}>*/}
+      {/*  */}
+      {/*</View>*/}
     </TouchableOpacity>
   );
 };

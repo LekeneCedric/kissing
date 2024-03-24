@@ -37,11 +37,11 @@ const UseAppView = (): AppViewBehaviour => {
   const accountIsActivated =
     selectAccountStatus == AccountActivatedEnum.ACTIVATED;
   useEffect(() => {
-    console.log(
-      accountIsNotActivated,
-      accountIsPendingActivation,
-      profileIsComplete,
-    );
+    // console.log(
+    //   accountIsNotActivated,
+    //   accountIsPendingActivation,
+    //   profileIsComplete,
+    // );
   }, []);
   return {
     accountIsPendingActivation: accountIsPendingActivation,

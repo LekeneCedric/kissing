@@ -1,7 +1,7 @@
 export interface UpdateProfileCommand {
   id: number,
   city: string;
-  birthday: Date;
+  birthday: string;
   about: string;
   sex: string;
   search_type: string;

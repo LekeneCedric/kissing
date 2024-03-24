@@ -18,8 +18,7 @@ const RecoverPasswordConfirmation = () => {
   const {
     form,
     onSubmit,
-    loading,
-    email
+    loading
   } = useRecoverPasswordConfirmation();
   const {
     control,
@@ -48,32 +47,13 @@ const RecoverPasswordConfirmation = () => {
                 label={"Code de confirmation"}
                 placeholder={"Entrez votre code de confirmation"}
                 icon={icons.account}
-                type={"default"}
+                type={"number-pad"}
                 field={field}
                 errorMessage={errors.code?.message}
               />
             )}
           />
           <View style={{ marginTop: heightPercentageToDP("2%") }} />
-
-          <Controller
-            name={"email"}
-            control={control}
-            render={({ field }) => {
-              field.value = email;
-              return (
-                <Input
-                  editable={false}
-                  placeholder={"Entrez votre addresse email"}
-                  label={"Adresse email"}
-                  icon={icons.email}
-                  type={"email-address"}
-                  errorMessage={errors.email?.message}
-                  field={field}
-                />
-              )
-            }}
-          />
 
           <Controller
             name={"new_password"}

@@ -26,6 +26,7 @@ import InterestsSelect from "../../../../../components/select/InterestsSelect/in
 import Button from "../../../../../components/button/button";
 import { BASEURL } from "../../../../../routes/ApiRoutes";
 import useUploadImageProfile from "../../../../User/Profile/Complete/useUploadImageProfile";
+import { SearchType } from "../../../../../../domain/User/User.ts";
 const MyProfil = () => {
   const {
     user,
@@ -41,7 +42,7 @@ const MyProfil = () => {
     onSubmit,
     removeImage,
   } = useMyProfileView();
-  const { images, uploadImages, removeImages, loading } =
+  const {uploadImages} =
     useUploadImageProfile();
 
   const {
@@ -105,14 +106,30 @@ const MyProfil = () => {
       <ScrollView>
         <View style={{width: '100%', justifyContent: 'center', alignItems: 'center'}}>
           <TouchableOpacity
+            style={{position: 'relative'}}
             onPress={() => {
-              navigateToGalerie(user.images![0]);
+              navigateToGalerie({id: 1, image: user.image_profile, is_main_photo: true});
             }}
           >
             <Avatar
               size={"medium"}
-              imageUri={BASEURL + "/" + user.images![0]?.image}
+              imageUri={user.image_profile}
             />
+            {
+              editMode && (
+                <TouchableOpacity
+                  onPress={() => {
+                    uploadImages(true)
+                  }}
+                  style={{
+                  position: 'absolute', right: 5, top: 15, padding: 2, borderRadius: 5,backgroundColor: colors.principal}}>
+                  <Icon
+                    name={icons.refresh}
+                    size={iconSize.medium}
+                    color={colors.light} />
+                </TouchableOpacity>
+              )
+            }
           </TouchableOpacity>
         </View>
 
@@ -132,7 +149,9 @@ const MyProfil = () => {
         >
           <Text style={styles.subTitle}>Galerie</Text>
           {editMode ? (
-            <TouchableOpacity onPress={uploadImages} style={styles.button}>
+            <TouchableOpacity onPress={() => {
+              uploadImages(false)
+            }} style={styles.button}>
               <Text style={{ color: colors.light, textAlign: "center" }}>
                 Ajouter une photo
               </Text>
@@ -183,7 +202,7 @@ const MyProfil = () => {
                           zIndex: 100000,
                           padding: 0,
                           borderRadius: 10,
-                          backgroundColor: colors.red,
+                          backgroundColor: colors.principal,
                         }}
                       >
                         <Icon
@@ -193,7 +212,7 @@ const MyProfil = () => {
                         />
                       </TouchableOpacity>
                     )}
-                    <Avatar imageUri={BASEURL + image.image} size={"small"} />
+                    <Avatar imageUri={image.image} size={"small"} />
                   </TouchableOpacity>
                 );
               }
@@ -295,7 +314,7 @@ const MyProfil = () => {
         ) : (
           <View>
             <Text style={{ padding: 10, fontSize: fontSizes.sectionTitle }}>
-              {user.search_type}
+              {SearchType.getValue(user.search_type!)}
             </Text>
           </View>
         )}

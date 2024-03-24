@@ -27,7 +27,7 @@ const useSignUpView = (): SignUpViewBehaviour => {
   const toast = useToast();
   const onSubmit = async (data: InputSignUpForm) => {
     const response = await dispatch(SignUpAsync(data));
-    console.log(response);
+   // console.log(response);
     if (SignUpAsync.fulfilled.match(response)) {
       // navigation.goTo(Routes.Auth.activateAccount);
     }

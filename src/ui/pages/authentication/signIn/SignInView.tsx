@@ -30,7 +30,7 @@ const SignInView = () => {
   const signInViewBehavior = useSignInView();
   const {auth} = signInViewBehavior;
   useEffect(() => {
-    console.log(auth);
+    // console.log(auth);
   }, []);
   return (
     <SafeAreaView style={styles.container}>

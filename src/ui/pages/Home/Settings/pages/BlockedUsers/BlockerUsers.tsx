@@ -19,6 +19,7 @@ const BlockerUsers = () => {
   const navigation = useNavigation();
   const {
     blockedUsers,
+    deblockUser
   } = useBlockedUsers();
   return (
     <SafeAreaView style={styles.container}>
@@ -57,14 +58,14 @@ const BlockerUsers = () => {
           <View style={{borderWidth: 1, flex: 1, borderColor: colors.gray}} />
           <Text style={{fontSize: fontSizes.description, color: colors.gray}}>
             {' '}
-            Cette semaine{' '}
+            Cette année{' '}
           </Text>
           <View style={{borderWidth: 1, flex: 1, borderColor: colors.gray}} />
         </View>
         {
-          blockedUsers.map(b => {
+          blockedUsers.map(details => {
             return (
-              <BlockedUser />
+              <BlockedUser deblock={(userId: number) => {deblockUser(userId)}} data={details} />
             )
           })
         }

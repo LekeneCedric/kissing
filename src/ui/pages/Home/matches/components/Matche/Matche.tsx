@@ -22,7 +22,7 @@ const Matche = ({id, image, username, age, isOnline}: props) => {
     <TouchableOpacity
       style={styles.container}
       onPress={() => {
-        console.log('id-to-go' + id);
+       // console.log('id-to-go' + id);
         // @ts-ignore
         navigation.navigate('detailsProfil', {userId: id});
       }}>

@@ -7,6 +7,7 @@ import FavorisSlice from '../../features/Favoris/FavorisSlice';
 import SubscriptionSlice  from "../../features/Subscription/SubscriptionSlice.ts";
 import MessagesSlice from "../../features/Messages/MessagesSlice.ts";
 import BlockedSlice from "../../features/Blocked/BlockedSlice.ts";
+import NotificationSlice from "../../features/Notifications/NotificationSlice.ts";
 
 export const rootReducer = combineReducers({
   authReducer: AuthenticationSlice,
@@ -17,4 +18,5 @@ export const rootReducer = combineReducers({
   subscriptionsReducter: SubscriptionSlice,
   messagesReducer: MessagesSlice,
   blockedReducer: BlockedSlice,
+  notificationReducer: NotificationSlice
 });

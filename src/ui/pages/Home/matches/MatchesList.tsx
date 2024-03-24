@@ -22,6 +22,7 @@ import {LoadingState} from '../../../../shared/enum/LoadingState';
 import fontSizes from '../../../constants/font-sizes';
 import {heightPercentageToDP} from 'react-native-responsive-screen';
 import {Recommendation} from '../../../../domain/User/User';
+import { images } from "../../../constants/images.ts";
 
 const MatchesList = () => {
   const [filterIsVisible, setFilterIsVisible] = useState<boolean>(false);
@@ -43,7 +44,7 @@ const MatchesList = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => {}}>
-          <Icon name={icons.menu} size={iconSize.normal} />
+          <Icon name={icons.menu} size={iconSize.normal} color={colors.light} />
         </TouchableOpacity>
         <Text style={styles.title}>Découverte</Text>
         <TouchableOpacity
@@ -74,7 +75,7 @@ const MatchesList = () => {
                   return (
                     <Matche
                       id={match?.id}
-                      image={BASEURL + '/' + match?.images[0]?.image}
+                      image={match.images.find(i => i.is_main_photo == true) ? `${BASEURL}${match?.images.find(i => i.is_main_photo===true)?.image!}` : images.default_image}
                       username={match?.user.username}
                       age={match?.age}
                       isOnline={match?.user.is_online}

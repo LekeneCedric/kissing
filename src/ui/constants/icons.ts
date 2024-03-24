@@ -37,6 +37,10 @@ const icons = {
 	info: 'information-outline',
 	pencil: 'pencil',
 	sendMessage: 'near-me',
+	picture: 'camera',
+	upload: 'upload',
+	plus: 'plus',
+	refresh: 'refresh'
 };
 
 export default icons;

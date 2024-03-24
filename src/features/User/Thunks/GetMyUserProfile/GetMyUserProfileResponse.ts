@@ -2,6 +2,7 @@ import {Image, User} from '../../../../domain/User/User';
 import {Interest} from '../../../../domain/Interest/Interest';
 
 export interface GetMyUserProfileResponse {
+  id: number,
   user: User;
   birthday: string;
   age?: number;

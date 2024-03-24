@@ -15,6 +15,8 @@ import {resetFiltersParams} from '../../../../features/Recommendations/Recommend
 import {cleanUser} from '../../../../features/User/UserSlice';
 import { cleanMessages } from "../../../../features/Messages/MessagesSlice.ts";
 import { cleanBlocked } from "../../../../features/Blocked/BlockedSlice.ts";
+import { BASEURL } from "../../../routes/ApiRoutes.ts";
+import { Auth } from "../../../../domain/Auth/Auth.ts";
 
 type MenuList = {
   icon: string;
@@ -26,15 +28,17 @@ type MenuList = {
 interface useSettingsViewBehaviour {
   menuList: MenuList[];
   user: User;
+  auth: Auth,
   goToMyProfile: () => void;
 }
 
 export default function useSettingsView(): useSettingsViewBehaviour {
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectUser);
+  const auth = useAppSelector(selectAuth);
   const navigation = useNavigation();
   useEffect(() => {
-    console.log(user);
+    // console.log(BASEURL + user!.image_profile);
   }, []);
   const logout = () => {
     dispatch(cleanAuth());
@@ -106,6 +110,7 @@ export default function useSettingsView(): useSettingsViewBehaviour {
   return {
     menuList: menuList,
     user: user!,
+    auth: auth!,
     goToMyProfile: goToUserProfil,
   };
 }

@@ -16,12 +16,14 @@ import {
 import useNavigate from "../../../Global/hooks/useNavigation.tsx";
 import { AuthenticationRoutes } from "../../../routes/Router.ts";
 import { useRoute } from "@react-navigation/native";
+import {
+  RecoverPasswordConfirmationCommand
+} from "../../../../features/auth/thunks/RecoverPasswordConfirmation/RecoverPasswordConfirmationCommand.ts";
 
 interface useRecoverPasswordConfirmationBehavior {
   form: UseFormReturn<RecoverPasswordConfirmationForm>;
   onSubmit: (data: RecoverPasswordConfirmationForm) => void;
   loading: LoadingState;
-  email: string;
 }
 export const useRecoverPasswordConfirmation = (): useRecoverPasswordConfirmationBehavior => {
     const route = useRoute();
@@ -36,7 +38,11 @@ export const useRecoverPasswordConfirmation = (): useRecoverPasswordConfirmation
     });
 
     const onSubmit = async (data: RecoverPasswordConfirmationForm) => {
-      const response = await dispatch(RecoverPasswordConfirmationAsync(data));
+      const formData: RecoverPasswordConfirmationCommand = {
+        ...data,
+        email: email
+      }
+      const response = await dispatch(RecoverPasswordConfirmationAsync(formData));
 
       if (RecoverPasswordConfirmationAsync.fulfilled.match(response)) {
         toast.show(
@@ -66,7 +72,6 @@ export const useRecoverPasswordConfirmation = (): useRecoverPasswordConfirmation
     return {
       form: form,
       onSubmit: onSubmit,
-      loading: loading,
-      email: email,
+      loading: loading
     }
 }

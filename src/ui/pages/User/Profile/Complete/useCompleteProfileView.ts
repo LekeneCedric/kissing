@@ -17,10 +17,15 @@ import {Interest} from '../../../../../domain/Interest/Interest';
 import {LoadingState} from '../../../../../shared/enum/LoadingState';
 import {
   cleanAuth,
-  setProfileIsComplete,
-} from '../../../../../features/auth/thunks/AuthenticationSlice';
+  setProfileIsComplete, setupMyAuthUserProfile
+} from "../../../../../features/auth/thunks/AuthenticationSlice";
 import {searchTypes} from '../../../../../shared/constants/searchType';
 import { CreateProfileCommand } from "../../../../../features/User/Thunks/CreateProfile/CreateProfileCommand.ts";
+import { GetMyUserProfileAsync } from "../../../../../features/User/Thunks/GetMyUserProfile/GetMyUserProfileAsync.ts";
+import {
+  GetMyUserProfileResponse
+} from "../../../../../features/User/Thunks/GetMyUserProfile/GetMyUserProfileResponse.ts";
+import { setupMyUserProfile } from "../../../../../features/User/UserSlice.ts";
 
 export interface UseCompleteProfileBehaviour {
   goBack: () => void;
@@ -63,6 +68,20 @@ const useCompleteProfileView = (): UseCompleteProfileBehaviour => {
       );
     }
     if (createProfileAsync.fulfilled.match(response)) {
+      console.log('create-profile-response',response.payload);
+      const userDataResponse = await dispatch(GetMyUserProfileAsync({}));
+      console.log(userDataResponse.payload);
+      dispatch(
+        setupMyAuthUserProfile(
+          userDataResponse.payload as GetMyUserProfileResponse,
+        ),
+      );
+      dispatch(
+        setupMyUserProfile(
+          userDataResponse.payload as GetMyUserProfileResponse,
+        ),
+      );
+      dispatch(GetAllInterestAsync());
       dispatch(setProfileIsComplete());
     }
   };
@@ -70,7 +89,7 @@ const useCompleteProfileView = (): UseCompleteProfileBehaviour => {
   const interests = useAppSelector(selectInterests);
   useEffect(() => {
     dispatch(GetAllInterestAsync());
-    console.log('interets', interests);
+   // console.log('interets', interests);
   }, []);
   return {
     goBack: () => {

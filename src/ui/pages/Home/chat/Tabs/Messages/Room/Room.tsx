@@ -5,41 +5,42 @@ import colors from "../../../../../../constants/colors.ts";
 import icons from "../../../../../../constants/icons.ts";
 import iconSize from "../../../../../../constants/iconSize.ts";
 import Avatar from "../../../../../../components/avatar/avatar.tsx";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import fontSizes from "../../../../../../constants/font-sizes.ts";
 import {
   Bubble,
-  BubbleProps,
   GiftedChat,
-  IMessage,
-  LeftRightStyle,
-  QuickRepliesProps,
-  RenderMessageAudioProps,
-  RenderMessageImageProps,
-  RenderMessageTextProps,
-  RenderMessageVideoProps,
-  Reply, Send,
-  SendProps,
-  TimeProps,
-  User
+  Send,
 } from "react-native-gifted-chat";
-import React, { JSX, ReactNode, useCallback, useEffect, useState } from "react";
-import { InferProps, Validator, Requireable, ReactElementLike } from "prop-types";
+import React, {useCallback} from "react";
 import IsOnlineIndicator from "../../../../../../components/isOnlineIndicator/isOnlineIndicator.tsx";
 import { useRoomView } from "./useRoomView.ts";
 import { BASEURL } from "../../../../../../routes/ApiRoutes.ts";
 import { images } from "../../../../../../constants/images.ts";
-
-const Room = () => {
+import { IMessage as IMessageGiftedChat } from "react-native-gifted-chat/lib/Models";
+import useNavigate from "../../../../../../Global/hooks/useNavigation.tsx";
+type props = {
+  onSendMessage: (messages: IMessageGiftedChat[], data: {id: any, name: any, image_path: any}) => void
+}
+const Room = ({onSendMessage}:props) => {
   const navigation = useNavigation();
+  const {goTo} = useNavigate()
+  const route = useRoute();
   const {
     messages,
-    addMessages,
-    user
+    user,
+    myId
   } = useRoomView();
 
   const onSend = useCallback((messages = []) => {
-    addMessages(messages);
+    onSendMessage(messages, {
+      //@ts-ignore
+      id: route.params!.user.id,
+      //@ts-ignore
+      name: route.params!.user.name,
+      //@ts-ignore
+      image_path: route.params!.user.image_path
+    });
   }, []);
   const renderBubble = (props: any) => {
     return (
@@ -87,16 +88,18 @@ const Room = () => {
           }}>
             <Icon name={icons.back} color={colors.principal} size={iconSize.normal} />
           </TouchableOpacity>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <TouchableOpacity onPress={()=>{
+            goTo('detailsProfil', {userId: user.id});
+          }} style={{ flexDirection: "row", alignItems: "center", justifyContent: 'center' }}>
             <Avatar
-              imageUri={user.image_path ? BASEURL + "/" + user.image_path : images.default_image}
+              imageUri={user.image_path ? BASEURL + user.image_path : images.default_image}
               size={"chat"}
             />
-            <Text style={{ fontSize: fontSizes.sectionTitle }}>{user.name}</Text>
-          </View>
+            <Text style={{ fontSize: fontSizes.sectionTitle, left: 10 }} numberOfLines={1}>{user.name}</Text>
+          </TouchableOpacity>
         </View>
         <View>
-          <IsOnlineIndicator isOnline={true} />
+          <IsOnlineIndicator isOnline={user.is_online} />
         </View>
       </View>
 
@@ -128,7 +131,7 @@ const Room = () => {
           justifyContent: "center",
           top: "42%",
           opacity: 0.2,
-          zIndex: 1,
+          zIndex: 0,
         }]}
       />
     </SafeAreaView>

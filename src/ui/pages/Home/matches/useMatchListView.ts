@@ -96,7 +96,7 @@ export default function useMatchListView(): MatchListViewBehaviour {
     let result = [];
     for (let i = 0; i < recommendations.length - 1; i += 3) {
       result.push(recommendations.slice(i, i + 3));
-      console.log(recommendations.slice(i, i + 3).length)
+      // console.log(recommendations.slice(i, i + 3).length)
     }
     return result;
   };

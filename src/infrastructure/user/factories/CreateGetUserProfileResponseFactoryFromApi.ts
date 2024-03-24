@@ -2,6 +2,7 @@ import {GetUserProfileResponse} from '../../../features/User/Thunks/GetUserProfi
 
 export const CreateGetUserProfileResponseFactoryFromApi = (data: any) => {
   return {
+    id: data.id,
     user: {
       id: data.user.id,
       username: data.user.username,

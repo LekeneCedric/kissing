@@ -43,7 +43,7 @@ export const RecommendationsSlice = createSlice({
     },
     nextRecommendations: state => {
       state.offset = state.offset + 3;
-      console.log(`limit : ${state.limit} , offset : ${state.offset}`);
+      //console.log(`limit : ${state.limit} , offset : ${state.offset}`);
     },
     updateCityFilter: (state, {payload}: PayloadAction<string>) => {
       state.city = payload;
@@ -85,15 +85,16 @@ export const RecommendationsSlice = createSlice({
         GetRecommendationsAsync.fulfilled,
         (state, {payload}: PayloadAction<GetRecommendationsResponse>) => {
           state.loading = LoadingState.success;
-          console.log(payload.results.length);
+          //console.log(payload.results.length);
           // state.recommendations = [
           //     ...payload.results!
           // ]
           if (state.recommendations.length === 0) {
             state.recommendations = [...payload.results!];
           } else {
+            const newRecommendationsIds = payload.results.map(r_ => r_.id)
             state.recommendations = [
-              ...state.recommendations,
+              ...state.recommendations.filter(r => !newRecommendationsIds.includes(r.id)),
               ...payload.results!,
             ];
           }

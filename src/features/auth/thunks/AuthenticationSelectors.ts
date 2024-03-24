@@ -4,7 +4,7 @@ export const selectAuthLoading = (state: RootState) => {
   return state.authReducer.loading;
 };
 export const selectUser = (state: RootState) => {
-  return state.authReducer.auth?.user;
+  return state.userReducer.user;
 };
 export const selectAuth = (state: RootState) => {
   return state.authReducer.auth;

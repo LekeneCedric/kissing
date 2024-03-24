@@ -22,6 +22,8 @@ import {
 import { useToast } from "react-native-toast-notifications";
 import { UpdateProfileCommand } from "../../../../../../features/User/Thunks/UpdateProfile/UpdateProfileCommand.ts";
 import { UpdateProfileAsync } from "../../../../../../features/User/Thunks/UpdateProfile/UpdateProfileAsync.ts";
+import { updateProfile } from "../../../../../../features/User/UserSlice.ts";
+import { updateAuthUser } from "../../../../../../features/auth/thunks/AuthenticationSlice.ts";
 
 interface updateProfileCommand {
   city: string,
@@ -63,6 +65,7 @@ export default function useMyProfileView(): useMyProfileViewBehaviour {
     const dat = {
       id: auth!.user!.id,
       sex: user!.sex!,
+      birthday: '2002-09-30',
       city: data.city !== undefined ? data.city : user!.city,
       about: data.about !== undefined ? data.about : user!.about,
       search_type: data.search_type !== undefined ? data.search_type : user!.search_type,
@@ -78,6 +81,8 @@ export default function useMyProfileView(): useMyProfileViewBehaviour {
         duration: 2000,
         animationType: "slide-in",
       });
+      dispatch(updateProfile(dat));
+      dispatch(updateAuthUser(dat));
     }
     if (UpdateProfileAsync.rejected.match(response)) {
       toast.show("Une érreur est survenue lors du traitement de votre opération !", {
@@ -95,12 +100,14 @@ export default function useMyProfileView(): useMyProfileViewBehaviour {
 
   const navigateToGalerie = (image?: Image) => {
     if (!image) {
+      let new_images = user?.images!.map(
+        i => {return {image: i.image, is_main_photo:true}})
       //@ts-ignore
-      navigation.navigate('galerie', { images: user?.images });
+      navigation.navigate('galerie', { images: new_images });
     }
     if (image) {
       //@ts-ignore
-      navigation.navigate('galerie', { images: [image] });
+      navigation.navigate('galerie', { images: [{ ...image, is_main_photo: true }] });
     }
   };
   const removeImageToGalerie = async (imageId: number) => {
@@ -127,6 +134,8 @@ export default function useMyProfileView(): useMyProfileViewBehaviour {
 
   useEffect(() => {
     dispatch(GetAllInterestAsync());
+    console.log(user!.images)
+    console.log(user!.image_profile)
   }, []);
   return {
     user: user!,

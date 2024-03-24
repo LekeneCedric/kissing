@@ -26,7 +26,8 @@ import {BASEURL} from '../../../../../../routes/ApiRoutes';
 import {LoadingState} from '../../../../../../../shared/enum/LoadingState';
 import { useNavigation } from "@react-navigation/native";
 import GalerieItem from "../../../../../../components/Galerie/Item/GalerieItem.tsx";
-
+import { images as sharedImages } from "../../../../../../constants/images.ts";
+import { SearchType } from "../../../../../../../domain/User/User.ts";
 // @ts-ignore
 const Details = () => {
   const {
@@ -111,11 +112,12 @@ const Details = () => {
             <View style={{width: '100%', height: hp('35%')}}>
               <TouchableWithoutFeedback
                 onPress={() => {
-                  navigateToGalerie(images![0]);
+                  images?.find(i => i.is_main_photo == true) ?
+                  navigateToGalerie(images![0]) : null;
                 }}>
                 <Image
                   style={{width: '100%', height: '100%'}}
-                  source={{uri: BASEURL + '/' + images![0]?.image}}
+                  source={{uri: images?.find(i => i.is_main_photo == true) ? BASEURL + images?.find(i => i.is_main_photo == true)!.image : sharedImages.default_image}}
                 />
               </TouchableWithoutFeedback>
             </View>
@@ -233,7 +235,7 @@ const Details = () => {
                     color: colors.gray,
                     fontSize: fontSizes.text,
                   }}>
-                  {search}
+                  {SearchType.getValue(search!)}
                 </Text>
               </View>
             </View>
@@ -266,8 +268,8 @@ const Details = () => {
                   marginTop: hp('2%'),
                   marginBottom: hp('2%'),
                 }}>
-                {images!.map((image, index) => {
-                  if (index !== 0 && index < 4) {
+                {images!.filter(i => !i.is_main_photo).map((image, index) => {
+                  if (index < 4) {
                     return (
                       <TouchableOpacity
                         onPress={() => {

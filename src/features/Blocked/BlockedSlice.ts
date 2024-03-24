@@ -61,7 +61,7 @@ export const BlockedSlice = createSlice(
         .addCase(RemoveBlockedUserAsync.fulfilled, (state, {payload}: PayloadAction<RemoveBlockedUserResponse>) => {
           state.loading = LoadingState.success;
           state.blocked_list = state.blocked_list.filter(b => b !== payload.user_id);
-          state.blocked = state.blocked.filter(b => b.user!.id !== payload.user_id);
+          state.blocked = state.blocked.filter(b => b.id !== payload.user_id);
         })
         .addCase(RemoveBlockedUserAsync.rejected, state => {
           state.loading = LoadingState.failed;

@@ -1,18 +1,18 @@
-import {configureStore} from '@reduxjs/toolkit';
-import {rootReducer} from './reducers/Reducer';
-import {AuthApiGatewayHttp} from '../infrastructure/auth/gateways/AuthApiGatewayHttp';
-import {listenerMiddleware} from './listenerMiddleware';
-import {setupListeners} from '@reduxjs/toolkit/query';
+import { configureStore } from '@reduxjs/toolkit';
+import { rootReducer } from './reducers/Reducer';
+import { AuthApiGatewayHttp } from '../infrastructure/auth/gateways/AuthApiGatewayHttp';
+import { listenerMiddleware } from './listenerMiddleware';
+import { setupListeners } from '@reduxjs/toolkit/query';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {persistReducer, persistStore} from 'redux-persist';
-import {UserApiGatewayHttp} from '../infrastructure/user/gateways/UserApiGatewayHttp';
-import {InterestApiGatewayHttp} from '../infrastructure/interest/gateways/InterestApiGatewayHttp';
-import {FavorisApiGatewayHttp} from '../infrastructure/Favoris/gateways/FavorisApiGatewayHttp';
+import { persistReducer, persistStore } from 'redux-persist';
+import { UserApiGatewayHttp } from '../infrastructure/user/gateways/UserApiGatewayHttp';
+import { InterestApiGatewayHttp } from '../infrastructure/interest/gateways/InterestApiGatewayHttp';
+import { FavorisApiGatewayHttp } from '../infrastructure/Favoris/gateways/FavorisApiGatewayHttp';
 import { SubscriptionApiGatewayHttp } from "../infrastructure/Subscription/gateways/SubscriptionApiGatewayHttp.ts";
 import { BlockeApiGatewayHttp } from "../infrastructure/Blocked/gateways/BlockeApiGatewayHttp.ts";
 
 const persistConfig = {
-  key: 'kis_+',
+  key: 'kis237',
   storage: AsyncStorage,
 };
 

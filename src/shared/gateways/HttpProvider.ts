@@ -8,8 +8,12 @@ export abstract class HttpProvider {
   public async update(url: string, data: Object): Promise<Response> {
     return api.put(url, data);
   }
-  public async delete(url: string,): Promise<Response> {
-    return api.delete(url);
+  public async delete(url: string): Promise<Response> {
+    return api.delete(url, {
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
   }
 
   public async upload(url: string, data: any): Promise<Response> {

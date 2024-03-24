@@ -184,34 +184,35 @@ const FilterMatchesModal = ({
                 </Text>
               </View>
             </View>
-            <View style={{marginTop: 50}} />
-            <Button
-              label={'Vider le filtre'}
-              handleClick={() => {
-                cleanFilterParams();
-              }}
-              customStyle={{
-                isOutline: false,
-                backgroundColor: colors.gray,
-                textColor: colors.principal,
-              }}
-              isLoading={false}
-            />
-            <View style={{marginTop: 20}} />
-            <Button
-              label={'Valider'}
-              handleClick={() => {
-                action();
-              }}
-              customStyle={{
-                isOutline: false,
-                backgroundColor: colors.principal,
-                textColor: colors.light,
-              }}
-              isLoading={false}
-            />
+
           </View>
         </ScrollView>
+        <View style={{marginTop: 50}} />
+        <Button
+          label={'Vider le filtre'}
+          handleClick={() => {
+            cleanFilterParams();
+          }}
+          customStyle={{
+            isOutline: false,
+            backgroundColor: colors.gray,
+            textColor: colors.principal,
+          }}
+          isLoading={false}
+        />
+        <View style={{marginTop: 20}} />
+        <Button
+          label={'Valider'}
+          handleClick={() => {
+            action();
+          }}
+          customStyle={{
+            isOutline: false,
+            backgroundColor: colors.principal,
+            textColor: colors.light,
+          }}
+          isLoading={false}
+        />
       </SafeAreaView>
     </Modal>
   );

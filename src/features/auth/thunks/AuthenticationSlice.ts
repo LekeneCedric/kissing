@@ -15,6 +15,9 @@ import {ActivateAccountResponse} from './activateAccount/activateAccount/Activat
 import {GetMyUserProfileResponse} from '../../User/Thunks/GetMyUserProfile/GetMyUserProfileResponse';
 import { RecoverPasswordSendEmailAsync } from "./RecoverPasswordSendEmail/RecoverPasswordSendEmailAsync.ts";
 import { RecoverPasswordConfirmationAsync } from "./RecoverPasswordConfirmation/RecoverPasswordConfirmationAsync.ts";
+import { Image } from "../../../domain/User/User.ts";
+import { UpdateProfileCommand } from "../../User/Thunks/UpdateProfile/UpdateProfileCommand.ts";
+import { BASEURL } from "../../../ui/routes/ApiRoutes.ts";
 
 interface AuthenticationState {
   loading: LoadingState;
@@ -28,18 +31,28 @@ export const AuthenticationSlice = createSlice({
   name: 'authenticationSlice',
   initialState: initialState,
   reducers: {
+    updateAuthUser: (state, {payload}: PayloadAction<UpdateProfileCommand>) => {
+      state.auth!.user = {
+        ...state.auth!.user,
+        city: payload.city,
+        about: payload.about,
+        search_type: payload.search_type,
+        interests: payload.interests
+      }
+    },
     cleanAuth: state => {
       state.auth = undefined;
       state.loading = initialState.loading;
     },
-    setupMyUserProfile: (
+    setupMyAuthUserProfile: (
       state,
       {payload}: PayloadAction<GetMyUserProfileResponse>,
     ) => {
-      console.log('code237-payload',payload);
+      //console.log('code237-payload',payload);
       try {
         state.auth = {
           ...state.auth,
+          profileId: payload.id,
           user: {
             ...state.auth?.user!,
             id: payload.user.id,
@@ -52,11 +65,14 @@ export const AuthenticationSlice = createSlice({
             interests: payload.interests.map(i => i.id),
             sex: payload.sex,
             search_type: payload.search_type,
-            images: payload.images,
+            images: payload.images.map(image => {
+              return {id: image.id, image: BASEURL+image.image, is_main_photo: image.is_main_photo}
+            }),
+            image_profile: BASEURL+payload.images.find(i => i.is_main_photo)?.image,
           },
         };
       } catch (e) {
-        console.log(e);
+        //console.log(e);
       }
     },
     updateCurrentUserInfo: (
@@ -200,7 +216,11 @@ export const AuthenticationSlice = createSlice({
   },
 });
 
-export const {cleanAuth, setProfileIsComplete, setupMyUserProfile} =
-  AuthenticationSlice.actions;
+export const {
+  updateAuthUser,
+  cleanAuth,
+  setProfileIsComplete,
+  setupMyAuthUserProfile
+} = AuthenticationSlice.actions;
 
 export default AuthenticationSlice.reducer;

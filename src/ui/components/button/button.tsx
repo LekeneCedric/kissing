@@ -15,11 +15,13 @@ type ButtonProps = {
   handleClick: () => void;
   customStyle: ButtonStyle;
   isLoading: boolean;
+  disable: boolean;
 };
 
-const Button = ({label, handleClick, customStyle, isLoading}: ButtonProps) => {
+const Button = ({label, handleClick, customStyle, isLoading, disable}: ButtonProps) => {
   return (
     <TouchableOpacity
+      disabled={disable}
       style={[
         ButtonStyle.container,
         customStyle.isOutline

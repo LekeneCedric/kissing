@@ -82,6 +82,14 @@ export default function useMyProfileDetails(): myProfileDetailsBehaviour {
         animationType: "slide-in",
         successColor: colors.principal
       });
+    } else {
+      toast.show("Une érreur est survenue , réessayez plus tard !", {
+        type: "danger",
+        placement: "top",
+        duration: 3000,
+        animationType: "slide-in",
+        successColor: colors.principal
+      });
     }
   }
   const addToFavoris = async () => {
@@ -90,11 +98,20 @@ export default function useMyProfileDetails(): myProfileDetailsBehaviour {
       //@ts-ignore
       AddFavorisAsync({ user_id: route.params?.userId })
     );
+    // console.warn('user-id',route.params?.userId)
 
     if (AddFavorisAsync.fulfilled.match(response)) {
       dispatch(addUserToFavoris(userDetails!));
       toast.show("Ajouté au favoris", {
         type: "success",
+        placement: "top",
+        duration: 3000,
+        animationType: "slide-in",
+        successColor: colors.principal
+      });
+    } else {
+      toast.show("Impossible d'éffectuer cette opération , réssayez plus-tard !", {
+        type: "danger",
         placement: "top",
         duration: 3000,
         animationType: "slide-in",
@@ -107,9 +124,10 @@ export default function useMyProfileDetails(): myProfileDetailsBehaviour {
     //@ts-ignore
     navigation.navigate("room", {
       user: {
-        id: userDetails?.user!.id,
+        id: userDetails?.id,
         name: userDetails?.user?.username,
-        image_path: userDetails?.user?.image_profile ?? ""
+        image_path: userDetails?.images?.find(i => i.is_main_photo === true)?.image,
+        isOnline: userDetails?.user?.is_online
       }
     });
   };
@@ -130,6 +148,15 @@ export default function useMyProfileDetails(): myProfileDetailsBehaviour {
       });
       dispatch(RemoveUserFromFavorites(user_id));
     }
+    if(RemoveFromFavoritesAsync.rejected.match(response)) {
+      toast.show("Impossible d'éffectuer cette opération , réssayez plus-tard !", {
+        type: "danger",
+        placement: "top",
+        duration: 3000,
+        animationType: "slide-in",
+        successColor: colors.gray
+      });
+    }
   };
 
   const removetoBlocked = async () => {
@@ -148,19 +175,27 @@ export default function useMyProfileDetails(): myProfileDetailsBehaviour {
         successColor: colors.gray
       });
       dispatch(RemoveBlockedUser(user_id));
+    } else if (RemoveFromFavoritesAsync.rejected.match(response)) {
+      toast.show("Impossible d'éffectuer cette opération , réssayez plus-tard !", {
+        type: "danger",
+        placement: "top",
+        duration: 3000,
+        animationType: "slide-in",
+        successColor: colors.gray
+      });
     }
   }
   useEffect(() => {
-    console.log(favoris_list);
+    // console.log(favoris_list);
     const fetchData = async () => {
       const { params } = route;
       //@ts-ignore
       const userId = params?.userId;
       const response = await dispatch(GetUserProfileAsync({ id: userId }));
       if (GetUserProfileAsync.fulfilled.match(response)) {
-        console.log('code237-user-details',response.payload);
+       // console.log('code237-user-details',response.payload);
         setUserDetails(response.payload);
-        console.log(response.payload.user.username);
+       // console.log(response.payload.user.username);
       }
     };
 

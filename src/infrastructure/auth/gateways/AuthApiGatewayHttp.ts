@@ -1,18 +1,18 @@
-import {HttpProvider} from '../../../shared/gateways/HttpProvider';
-import {AuthApiGateway} from '../../../domain/Auth/AuthApiGateway';
-import {signUpCommand} from '../../../features/auth/thunks/signUp/SignUpCommand';
-import {SignUpResponse} from '../../../features/auth/thunks/signUp/SignUpResponse';
-import {AuthApiRoutes, API_BASEURL} from '../../../ui/routes/ApiRoutes';
-import {SignUpResponseFactoryFromApi} from '../factories/SignUpResponseFactoryFromApi';
-import {signInCommand} from '../../../features/auth/thunks/signIn/SignInCommand';
-import {SignInResponse} from '../../../features/auth/thunks/signIn/SignInResponse';
-import {SignInResponseFactoryFromApi} from '../factories/SignInResponseFactoryFromApi';
-import {SendCodeVerificationCommand} from '../../../features/auth/thunks/activateAccount/sendCodeVerification/SendCodeVerificationCommand';
-import {SendCodeVerificationResponse} from '../../../features/auth/thunks/activateAccount/sendCodeVerification/SendCodeVerificationResponse';
-import {SendCodeVerificationResponseFactoryFromApi} from '../factories/SendCodeVerificationResponseFactoryFromApi';
-import {ActivateAccountCommand} from '../../../features/auth/thunks/activateAccount/activateAccount/ActivateAccountCommand';
-import {ActivateAccountResponse} from '../../../features/auth/thunks/activateAccount/activateAccount/ActivateAccountResponse';
-import {ActivateAccountResponseFactoryFromApi} from '../factories/ActivateAccountResponseFactoryFromApi';
+import { HttpProvider } from '../../../shared/gateways/HttpProvider';
+import { AuthApiGateway } from '../../../domain/Auth/AuthApiGateway';
+import { signUpCommand } from '../../../features/auth/thunks/signUp/SignUpCommand';
+import { SignUpResponse } from '../../../features/auth/thunks/signUp/SignUpResponse';
+import { AuthApiRoutes, API_BASEURL } from '../../../ui/routes/ApiRoutes';
+import { SignUpResponseFactoryFromApi } from '../factories/SignUpResponseFactoryFromApi';
+import { signInCommand } from '../../../features/auth/thunks/signIn/SignInCommand';
+import { SignInResponse } from '../../../features/auth/thunks/signIn/SignInResponse';
+import { SignInResponseFactoryFromApi } from '../factories/SignInResponseFactoryFromApi';
+import { SendCodeVerificationCommand } from '../../../features/auth/thunks/activateAccount/sendCodeVerification/SendCodeVerificationCommand';
+import { SendCodeVerificationResponse } from '../../../features/auth/thunks/activateAccount/sendCodeVerification/SendCodeVerificationResponse';
+import { SendCodeVerificationResponseFactoryFromApi } from '../factories/SendCodeVerificationResponseFactoryFromApi';
+import { ActivateAccountCommand } from '../../../features/auth/thunks/activateAccount/activateAccount/ActivateAccountCommand';
+import { ActivateAccountResponse } from '../../../features/auth/thunks/activateAccount/activateAccount/ActivateAccountResponse';
+import { ActivateAccountResponseFactoryFromApi } from '../factories/ActivateAccountResponseFactoryFromApi';
 import {
   RecoverPasswordSendEmailCommand
 } from "../../../features/auth/thunks/RecoverPasswordSendEmail/RecoverPasswordSendEmailCommand.ts";
@@ -28,7 +28,7 @@ import {
 
 export class AuthApiGatewayHttp extends HttpProvider implements AuthApiGateway {
   async signUp(signUpCommand: signUpCommand): Promise<SignUpResponse> {
-    const {username, email, phone_number, password, re_password} =
+    const { username, email, phone_number, password, re_password } =
       signUpCommand;
     let result: any;
 
@@ -40,7 +40,7 @@ export class AuthApiGatewayHttp extends HttpProvider implements AuthApiGateway {
         password,
         re_password,
       });
-      console.log(`status : ${response.status}`);
+      //console.log(`status : ${response.status}`);
 
       if (!response.status.toString().startsWith('2')) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -55,7 +55,7 @@ export class AuthApiGatewayHttp extends HttpProvider implements AuthApiGateway {
   }
 
   async signIn(signInCommand: signInCommand): Promise<SignInResponse> {
-    const {email, password} = signInCommand;
+    const { email, password } = signInCommand;
     let result: any;
 
     try {
@@ -70,7 +70,7 @@ export class AuthApiGatewayHttp extends HttpProvider implements AuthApiGateway {
       //@ts-ignore
       result = response.data;
     } catch (error) {
-      console.log(error);
+      //console.log(error);
       throw new Error('');
     }
 
@@ -80,13 +80,15 @@ export class AuthApiGatewayHttp extends HttpProvider implements AuthApiGateway {
   async sendCodeVerification(
     sendCodeVerificationCommand: SendCodeVerificationCommand,
   ): Promise<SendCodeVerificationResponse> {
-    const {email} = sendCodeVerificationCommand;
+    const { email } = sendCodeVerificationCommand;
     let result: any;
 
     try {
-      const response = await this.post(AuthApiRoutes.sendCodeVerification, {
-        email,
-      });
+
+      const formdata = new FormData();
+      formdata.append('email', email);
+
+      const response = await this.post(AuthApiRoutes.sendCodeVerification, formdata);
 
       if (!response.status.toString().startsWith('2')) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -103,14 +105,20 @@ export class AuthApiGatewayHttp extends HttpProvider implements AuthApiGateway {
   async activateAccount(
     activateAccountCommand: ActivateAccountCommand,
   ): Promise<ActivateAccountResponse> {
-    const {email, code} = activateAccountCommand;
+    const { email, code } = activateAccountCommand;
     let result: any;
 
     try {
-      const response = await this.post(AuthApiRoutes.activateAccount, {
-        email,
-        code,
-      });
+      const formdata = new FormData();
+      formdata.append('email', activateAccountCommand.email);
+      formdata.append('code', activateAccountCommand.code);
+      console.log(`
+        email: ${email},
+        colde: ${code}
+      `)
+
+      const response = await this.post(AuthApiRoutes.activateAccount, formdata);
+
       if (!response.status.toString().startsWith('2')) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -125,7 +133,7 @@ export class AuthApiGatewayHttp extends HttpProvider implements AuthApiGateway {
   }
 
   async recoverPasswordSendEmail(recoverPasswordSendEmailCommand: RecoverPasswordSendEmailCommand): Promise<RecoverPasswordSendEmailResponse> {
-    const {email} = recoverPasswordSendEmailCommand;
+    const { email } = recoverPasswordSendEmailCommand;
     let result: any;
     try {
       const response = await this.post(AuthApiRoutes.recoverPasswordSendEmail, {
@@ -137,9 +145,9 @@ export class AuthApiGatewayHttp extends HttpProvider implements AuthApiGateway {
 
       //@ts-ignore
       result = response.data;
-      console.log(response);
+      //console.log(response);
     } catch (e) {
-      console.log(e);
+      //console.log(e);
       throw new Error('');
     }
     console.log('code237-recover', result);
@@ -147,12 +155,20 @@ export class AuthApiGatewayHttp extends HttpProvider implements AuthApiGateway {
   }
 
   async recoverPasswordConfirmation(recoverPasswordConfirmationCommand: RecoverPasswordConfirmationCommand): Promise<RecoverPasswordConfirmationResponse> {
-    let result:any;
+    let result: any;
     try {
-      const response = await this.post(AuthApiRoutes.recoverPasswordConfirmation, recoverPasswordConfirmationCommand);
+      const formdata = new FormData();
+
+      formdata.append('email', recoverPasswordConfirmationCommand.email);
+      formdata.append('code', recoverPasswordConfirmationCommand.code);
+      formdata.append('new_password', recoverPasswordConfirmationCommand.new_password);
+      formdata.append('re_new_password', recoverPasswordConfirmationCommand.re_new_password);
+
+      const response = await this.post(AuthApiRoutes.recoverPasswordConfirmation, formdata);
       if (!response.status.toString().startsWith('2')) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
+      //@ts-ignore
       result = response.data;
       console.log(response);
     } catch (e) {

@@ -29,7 +29,7 @@ export class FavorisApiGatewayHttp
       }
       //@ts-ignore
       result = response.data;
-      console.log('code237addfav', result);
+      //console.log('code237addfav', result);
     } catch (error) {
       throw new Error('');
     }
@@ -59,7 +59,7 @@ export class FavorisApiGatewayHttp
     let command = {
       user_id: removeFromFavoritesCommand.userId
     } as RemoveFromFavoritesResponse
-    console.log(command)
+    //console.log(command)
     try {
       const response = await this.post(FavorisApiRoutes.remove, command);
       if (!response.status.toString().startsWith('2')) {

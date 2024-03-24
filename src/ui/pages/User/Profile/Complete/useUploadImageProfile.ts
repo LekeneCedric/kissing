@@ -1,6 +1,6 @@
 import {Asset, launchImageLibrary} from 'react-native-image-picker';
 import ImagePicker from 'react-native-image-picker';
-import {useState} from 'react';
+import { useEffect, useState } from "react";
 import {useAppDispatch, useAppSelector} from '../../../../../app/hook';
 import {
   selectImages,
@@ -17,16 +17,19 @@ import {Platform} from 'react-native';
 import {
   UploadProfilePhotoAsync
 } from "../../../../../features/User/Thunks/UploadProfilePhoto/UploadProfilePhotoAsync.ts";
+import { selectUser } from "../../../../../features/auth/thunks/AuthenticationSelectors.ts";
 
 export interface useUploadImageProfileBehavior {
   images?: Image[];
-  uploadImages: () => void;
+  imageProfile?: string,
+  uploadImages: (is_main_profile: boolean) => void;
   removeImages: (index: number) => void;
   loading: LoadingState;
 }
 const useUploadImageProfile = (): useUploadImageProfileBehavior => {
   const dispatch = useAppDispatch();
   const images = useAppSelector(selectImages);
+  const imageProfile =  useAppSelector(selectUser)!.image_profile;
   const loading = useAppSelector(selectUserLoading);
   const toast = useToast();
   const uploadProfileImage = async (data: UploadProfileImageCommand) => {
@@ -73,36 +76,46 @@ const useUploadImageProfile = (): useUploadImageProfileBehavior => {
       );
     }
   };
-  const uploadImageAction = async () => {
+  const uploadImageAction = async (is_main_profile: boolean = false) => {
     const result = await launchImageLibrary({
       quality: 1,
       mediaType: 'photo',
       includeBase64: true,
-      selectionLimit: 5,
     });
-    if (result.assets?.length! < 5) {
-      toast.show(
-        'Sélectionner 5 images de vous !',
-        {
-          type: 'danger',
-          placement: 'top',
-          duration: 4000,
-          animationType: 'slide-in',
-        },
-      );
-    } else if (result.assets?.length! > 5) {
-      toast.show(
-        'Ne sélectionnez pas plus de 5 images de vous !',
-        {
-          type: 'danger',
-          placement: 'top',
-          duration: 4000,
-          animationType: 'slide-in',
-        },
-      );
-    } else {
+    // if (result.assets?.length! < 5) {
+    //   toast.show(
+    //     'Sélectionner 5 images de vous !',
+    //     {
+    //       type: 'danger',
+    //       placement: 'top',
+    //       duration: 4000,
+    //       animationType: 'slide-in',
+    //     },
+    //   );
+    // } else if (result.assets?.length! > 5) {
+    //   toast.show(
+    //     'Ne sélectionnez pas plus de 5 images de vous !',
+    //     {
+    //       type: 'danger',
+    //       placement: 'top',
+    //       duration: 4000,
+    //       animationType: 'slide-in',
+    //     },
+    //   );
+    // } else {
       result.assets?.map((image, index) => {
-        if (index == 0) {
+        // if (index == 0) {
+        //   const imageObject: UploadProfileImageCommand = {
+        //     name: image.fileName!,
+        //     type: image.type!,
+        //     uri:
+        //       Platform.OS == 'ios'
+        //         ? image.uri?.replace('file://', '')!
+        //         : image.uri!,
+        //     isMainPhoto: true,
+        //   };
+        //   uploadImage(imageObject);
+        // } else {
           const imageObject: UploadProfileImageCommand = {
             name: image.fileName!,
             type: image.type!,
@@ -110,31 +123,25 @@ const useUploadImageProfile = (): useUploadImageProfileBehavior => {
               Platform.OS == 'ios'
                 ? image.uri?.replace('file://', '')!
                 : image.uri!,
-          };
-          uploadProfileImage(imageObject);
-        } else {
-          const imageObject: UploadProfileImageCommand = {
-            name: image.fileName!,
-            type: image.type!,
-            uri:
-              Platform.OS == 'ios'
-                ? image.uri?.replace('file://', '')!
-                : image.uri!,
+            isMainPhoto: is_main_profile
           };
           uploadImage(imageObject);
-        }
+        // }
 
       });
-    }
+    // }
 
   };
 
   const removeImageAction = async (image_id: number) => {
     dispatch(removeImage({id: image_id}));
   };
-
+  useEffect(() => {
+    // console.warn(imageProfile)
+  }, []);
   return {
     images: images,
+    imageProfile: imageProfile,
     uploadImages: uploadImageAction,
     removeImages: removeImageAction,
     loading: loading,

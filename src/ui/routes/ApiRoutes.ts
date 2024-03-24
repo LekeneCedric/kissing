@@ -1,6 +1,6 @@
-export const API_BASEURL = 'http://192.168.43.129:8000/api';
-export const BASEURL = 'http://192.168.43.129:8000';
-export const SOCKET_SERVER_URL = '192.168.43.129:8000';
+export const API_BASEURL = 'http://192.168.43.31:8000/api';
+export const BASEURL = 'http://192.168.43.31:8000';
+export const SOCKET_SERVER_URL = '192.168.43.31:8000';
 
 export const AuthApiRoutes = {
   signUp: '/users/',
@@ -8,13 +8,13 @@ export const AuthApiRoutes = {
   sendCodeVerification: '/users/resend_activation/',
   activateAccount: '/users/activation/',
   recoverPasswordSendEmail: '/users/reset_password/',
-  recoverPasswordConfirmation: '/users/reset_password_confirmation/',
+  recoverPasswordConfirmation: '/users/reset_password_confirm/',
 };
 
 export const UserApiRoutes = {
   createProfile: '/users/profile/',
   uploadImageProfile: '/users/images/',
-  deleteImageProfile: '/users/images/',
+  deleteImageProfile: '/users/images',
   getUserProfile: '/users/profile',
   getRecommandation: '/recommendations',
   getMyUserProfile: '/users/profile/me/',

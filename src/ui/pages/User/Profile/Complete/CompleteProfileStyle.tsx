@@ -61,6 +61,26 @@ const styles = StyleSheet.create({
     fontSize: fontSizes.sectionTitle,
     fontWeight: 'bold',
   },
+  imageView: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: wp('40%'),
+    height: hp('18%'),
+    margin: '2%'
+  },
+  imageContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  imageCard: {
+    width: wp('40%'),
+    height: hp('18%'),
+    borderStyle: 'dashed',
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: '2%'
+  },
 });
 
 export default styles;

@@ -1,5 +1,14 @@
 import {Interest} from '../Interest/Interest';
 
+export const SearchType = {
+  serious_relationship: 'Relation sérieuse',
+  friendship : 'Amitié',
+  flirt : 'flirt',
+
+  getValue(key: string): string {
+    return this[key];
+  }
+}
 export interface User {
   id?: number;
   username?: string;
@@ -30,6 +39,7 @@ export interface UserDetail {
 export interface Image {
   id: number;
   image: string;
+  is_main_photo: boolean;
 }
 
 export interface Recommendation {

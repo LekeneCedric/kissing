@@ -36,7 +36,7 @@ const interestsSelect = ({
   }, []);
   useEffect(() => {
     field.onChange(userInterests);
-    console.log(userInterests);
+    //console.log(userInterests);
   }, [userInterests]);
   const selectInterest = (interest: Interest) => {
     dispatch(addInterest({id: interest.id}));

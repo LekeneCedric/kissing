@@ -1,16 +1,17 @@
-import React, {useEffect, useMemo, useState} from 'react';
-import {NavigationProp, useNavigation} from '@react-navigation/native';
-import {useAppDispatch, useAppSelector} from '../../../../app/hook';
-import {SendCodeVerificationAsync} from '../../../../features/auth/thunks/activateAccount/sendCodeVerification/SendCodeVerificationAsync';
-import {SendCodeVerificationCommand} from '../../../../features/auth/thunks/activateAccount/sendCodeVerification/SendCodeVerificationCommand';
-import {ActivateAccountCommand} from '../../../../features/auth/thunks/activateAccount/activateAccount/ActivateAccountCommand';
-import {ActivateAccountAsync} from '../../../../features/auth/thunks/activateAccount/activateAccount/ActivateAccountAsync';
+import React, { useEffect, useMemo, useState } from 'react';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { useAppDispatch, useAppSelector } from '../../../../app/hook';
+import { SendCodeVerificationAsync } from '../../../../features/auth/thunks/activateAccount/sendCodeVerification/SendCodeVerificationAsync';
+import { SendCodeVerificationCommand } from '../../../../features/auth/thunks/activateAccount/sendCodeVerification/SendCodeVerificationCommand';
+import { ActivateAccountCommand } from '../../../../features/auth/thunks/activateAccount/activateAccount/ActivateAccountCommand';
+import { ActivateAccountAsync } from '../../../../features/auth/thunks/activateAccount/activateAccount/ActivateAccountAsync';
 import {
+  selectAuth,
   selectAuthLoading,
   selectUser,
 } from '../../../../features/auth/thunks/AuthenticationSelectors';
-import {LoadingState} from '../../../../shared/enum/LoadingState';
-import {useToast} from 'react-native-toast-notifications';
+import { LoadingState } from '../../../../shared/enum/LoadingState';
+import { useToast } from 'react-native-toast-notifications';
 
 export interface ActivateAccountViewBehaviours {
   digitsContainer: (string | number | null)[][];
@@ -28,10 +29,10 @@ export interface ActivateAccountViewBehaviours {
 export default function useActivateAccountView(): ActivateAccountViewBehaviours {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
-  const email = useAppSelector(selectUser)!.email;
+  const email = useAppSelector(selectAuth)!.user?.email;
   const toast = useToast();
   const isLoading = useAppSelector(selectAuthLoading) == LoadingState.pending;
-  const [timer, setTimer] = useState<number>(0);
+  const [timer, setTimer] = useState<number>(10);
   const digitsContainer = useMemo(
     () => [
       [1, 2, 3],
@@ -55,13 +56,12 @@ export default function useActivateAccountView(): ActivateAccountViewBehaviours 
     if (seconds == 0 && minutes == 0) {
       return '';
     }
-    return `${minutes < 10 ? `0${minutes}` : `${minutes}`} : ${
-      seconds < 10 ? `0${seconds}` : `${seconds}`
-    }`;
+    return `${minutes < 10 ? `0${minutes}` : `${minutes}`} : ${seconds < 10 ? `0${seconds}` : `${seconds}`
+      }`;
   };
   useEffect(() => {
     if (timer === 0) {
-      navigation.goBack();
+      // navigation.goBack();
     }
     if (timer !== 0) {
       const intervalId = setInterval(() => {
@@ -72,7 +72,7 @@ export default function useActivateAccountView(): ActivateAccountViewBehaviours 
   }, [timer]);
   // Just For debugging
   useEffect(() => {
-    console.log(`index : ${currentIndex} code : ${code}`);
+    // console.log(`index : ${currentIndex} code : ${code}`);
   }, [code, currentIndex]);
 
   const onSendVerificationEmail = async (data: SendCodeVerificationCommand) => {
@@ -89,13 +89,35 @@ export default function useActivateAccountView(): ActivateAccountViewBehaviours 
       );
       setTimer(300);
     }
+    if (SendCodeVerificationAsync.rejected.match(response)) {
+      toast.show(
+        "Impossible d'éffectuer cette opération veuillez réessayer plus-tard !",
+        {
+          type: 'danger',
+          placement: 'top',
+          duration: 4000,
+          animationType: 'slide-in',
+        },
+      );
+    }
   };
 
   const onActivateAccount = async (data: ActivateAccountCommand) => {
-    console.log(data);
+    //console.log(data);
     const response = await dispatch(ActivateAccountAsync(data));
     if (ActivateAccountAsync.fulfilled.match(response)) {
-      console.warn('Account has been activated successfully !');
+      // console.warn('Account has been activated successfully !');
+    }
+    if (ActivateAccountAsync.rejected.match(response)) {
+      toast.show(
+        "Impossible d'éffectuer cette opération veuillez réessayer plus-tard !",
+        {
+          type: 'danger',
+          placement: 'top',
+          duration: 4000,
+          animationType: 'slide-in',
+        },
+      );
     }
   };
   return {
