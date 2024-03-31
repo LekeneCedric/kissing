@@ -78,7 +78,7 @@ const FilterMatchesModal = ({
               textAlign: 'center',
             }}>
             {' '}
-            Filtrer les mathes
+            Filtre des profils
           </Text>
         </View>
         <ScrollView>

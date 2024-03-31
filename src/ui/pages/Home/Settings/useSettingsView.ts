@@ -17,6 +17,7 @@ import { cleanMessages } from "../../../../features/Messages/MessagesSlice.ts";
 import { cleanBlocked } from "../../../../features/Blocked/BlockedSlice.ts";
 import { BASEURL } from "../../../routes/ApiRoutes.ts";
 import { Auth } from "../../../../domain/Auth/Auth.ts";
+import { clearNotification } from "../../../../features/Notifications/NotificationSlice.ts";
 
 type MenuList = {
   icon: string;
@@ -41,13 +42,14 @@ export default function useSettingsView(): useSettingsViewBehaviour {
     // console.log(BASEURL + user!.image_profile);
   }, []);
   const logout = () => {
-    dispatch(cleanAuth());
     dispatch(cleanFavoris());
     dispatch(cleanInterests());
     dispatch(resetFiltersParams());
     dispatch(cleanUser());
+    dispatch(clearNotification())
     dispatch(cleanMessages());
     dispatch(cleanBlocked());
+    dispatch(cleanAuth());
   };
   const goToUserProfil = () => {
     // @ts-ignore

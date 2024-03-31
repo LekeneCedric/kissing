@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import useAppView from "../Global/hooks/useAppView";
 import ActiveAccountView from "../pages/authentication/activate_account/ActiveAccountView";
@@ -25,9 +25,14 @@ import RecoverPasswordSendEmail from "../pages/authentication/RecoverPasswordSen
 import RecoverPasswordConfirmation
   from "../pages/authentication/RecoverPasswordConfirmation/RecoverPasswordConfirmation.tsx";
 import { INotification } from "../../domain/Notifications/Notifications.ts";
-import { addNotification } from "../../features/Notifications/NotificationSlice.ts";
+import {
+  addNotification,
+  clearNotification,
+  setMyNotificationId
+} from "../../features/Notifications/NotificationSlice.ts";
 import { IMessage as IMessageGiftedChat } from "react-native-gifted-chat/lib/Models";
 import uuid from "react-native-uuid";
+import { useToast } from "react-native-toast-notifications";
 
 const Stack = createNativeStackNavigator();
 
@@ -43,9 +48,11 @@ function MainScreens(): JSX.Element {
   const dispatch = useAppDispatch();
   const authToken = useAppSelector(selectAuth)?.token;
   const myId = useAppSelector(selectAuth)?.profileId;
-
-  console.warn(`my id : ${myId}`);
   const user = useAppSelector(selectUser);
+  const toast = useToast();
+  const ws = useRef<WebSocket | null>(null);
+  const wsNotifications = useRef<WebSocket | null>(null);
+
   const addMessages = async (messages: IMessageGiftedChat[], data: { id: any, name: any, image_path: any }) => {
     const newMessage: IMessage = {
       id: uuid.v4().toString(),
@@ -64,152 +71,165 @@ function MainScreens(): JSX.Element {
       is_read: false
     };
     console.warn(newMessage);
-    const ws_ = new WebSocket("ws://" + SOCKET_SERVER_URL + "/ws/chat/?token=" + authToken);
+    const ws_ = new WebSocket("wss://" + SOCKET_SERVER_URL + "/ws/chat/?token=" + authToken);
     ws_.onopen = () => {
-      ws_.send(JSON.stringify({
-        action: "create",
-        data: {
-          content: messages[messages.length - 1].text,
-          //@ts-ignore
-          receiver: data.id
-        },
-        request_id: new Date().getTime()
-      }));
+      if (ws_.readyState === WebSocket.OPEN) {
+        ws_.send(JSON.stringify({
+          action: "create",
+          data: {
+            content: messages[messages.length - 1].text,
+            //@ts-ignore
+            receiver: data.id
+          },
+          request_id: new Date().getTime()
+        }));
+        dispatch(addMessage(newMessage));
+      }
     };
-    ws_.onclose = () => {
-
+    ws_.onclose = (e) => {
+      console.warn(e);
+      toast.show("Vérifiez votre connexion internet et réessayer !", {
+        type: "danger",
+        placement: "top",
+        duration: 4000,
+        animationType: "slide-in"
+      });
     };
-    dispatch(addMessage(newMessage));
   };
 
+  const connectToWsSocket = () => {
+    if (authToken && ws.current === null) {
+      ws.current = new WebSocket("wss://" + SOCKET_SERVER_URL + "/ws/chat/?token=" + authToken);
+    }
+    if (authToken && ws.current !== null) {
+      console.warn("socket:open");
+      if (ws.current?.readyState === WebSocket.CLOSED) {
+        ws.current = new WebSocket("wss://" + SOCKET_SERVER_URL + "/ws/chat/?token=" + authToken);
+      }
+      ws.current!.onopen = () => {
+        if (ws.current!.readyState === WebSocket.OPEN) {
+          ws.current!.onmessage = (event: WebSocketMessageEvent) => {
+            console.warn("socket:onMessage");
+            const response = JSON.parse(event.data);
+            try {
+              let mIds: number[] = [];
+              response.data.map((m: any) => {
+                const message: IMessage = {
+                  id: m.id,
+                  message: m.content,
+                  sender: {
+                    id: m.sender.id,
+                    name: m.sender.username,
+                    image_path: m.sender.profile_photo.image
+                  },
+                  receiver: {
+                    id: m.receiver.id,
+                    name: m.receiver.username,
+                    image_path: m.receiver.profile_photo.image
+                  },
+                  created_at: new Date(m.created_at)
+                };
+                mIds.push(m.id);
+                dispatch(addMessage(message));
+              });
+              let w = new WebSocket("wss://" + SOCKET_SERVER_URL + "/ws/chat/?token=" + authToken);
+              mIds.map(id => {
+                w.send(JSON.stringify({
+                  action: "delivery_receipt_acknowledgement",
+                  request_id: new Date().getTime(),
+                  message_id: id
+                }));
+              })
+            } catch (e) {
+            }
+          };
+        }
+      };
+      ws.current!.onclose = (e: any) => {
+        connectToWsSocket();
+      };
+    }
+  };
 
-  const ws = new WebSocket("ws://" + SOCKET_SERVER_URL + "/ws/chat/?token=" + authToken);
-  const wsNotifications = new WebSocket("ws://" + SOCKET_SERVER_URL + "/ws/notifications?token=" + authToken);
+  const connectToWsNotificationSocket = () => {
+    if (authToken && wsNotifications.current === null) {
+      wsNotifications.current = new WebSocket("wss://" + SOCKET_SERVER_URL + "/ws/notifications/?token=" + authToken);
+    }
+    if (authToken && wsNotifications.current !== null) {
+      console.warn("socket_notif:open");
+      if (wsNotifications.current?.readyState === WebSocket.CLOSED) {
+        wsNotifications.current = new WebSocket("wss://" + SOCKET_SERVER_URL + "/ws/notifications/?token=" + authToken);
+      }
+      wsNotifications.current!.onopen = () => {
+        //console.log("connect to notif");
+        if (wsNotifications.current!.readyState === WebSocket.OPEN) {
+          wsNotifications.current!.onmessage = (event: WebSocketMessageEvent) => {
+
+            const response = JSON.parse(event.data);
+            // console.warn('new notif', response)
+            response.data.map((notif: any) => {
+              const newNotification: INotification = {
+                id: `${notif.notification_type}${notif.content}${notif.created_at}`,
+                notification_type: notif.notification_type,
+                sender: notif.sender,
+                recipient: notif.recipient,
+                created_at: notif.created_at,
+                content: notif.content,
+                already_send: notif.already_send
+              };
+              console.warn("new-notif", newNotification);
+              dispatch(addNotification(newNotification));
+            });
+          };
+        }
+      };
+      wsNotifications.current!.onclose = (e: any) => {
+        connectToWsNotificationSocket();
+      };
+    }
+  };
+
   useEffect(() => {
-    console.warn("socket change.........");
-    ws.onopen = () => {
-      // ws.send(
-      //   JSON.stringify({
-      //     action: "subscribe_to_chat_activity",
-      //     request_id: new Date().getTime()
-      //   })
-      // );
-      // setInterval(() => {
-      //   ws.send(
-      //     JSON.stringify({
-      //       action: "list",
-      //       request_id: new Date().getTime()
-      //     })
-      //   );
-      // }, 3000)
+    dispatch(setMyId(myId!));
+    dispatch(setMyNotificationId(myId!));
+    setInterval(() => {
+      console.warn("token:", authToken);
+      if (authToken && ws.current === null) {
+        console.warn("socket:create");
+        ws.current = new WebSocket("wss://" + SOCKET_SERVER_URL + "/ws/chat/?token=" + authToken);
+        connectToWsSocket();
+      }
+      if (authToken && ws.current?.readyState === WebSocket.OPEN) {
+        ws!.current!.send(
+          JSON.stringify({
+            action: "list",
+            request_id: new Date().getTime()
+          })
+        );
+      }
+      if (authToken && wsNotifications.current === null) {
+        console.warn("socket:create");
+        wsNotifications.current = new WebSocket("wss://" + SOCKET_SERVER_URL + "/ws/notifications/?token=" + authToken);
 
-
-      ws.onmessage = (event: WebSocketMessageEvent) => {
-        // console.warn(`${user!.id} - new message !`)
-        const response = JSON.parse(event.data);
-        //console.log("code237f2f", response);
-        // if (response.content) {
-        //   ws.send(
-        //     JSON.stringify({
-        //       action: "list",
-        //       request_id: new Date().getTime()
-        //     })
-        //   );
-        // }
-        try {
-          console.warn(`msg : ${myId}`, response);
-          response.data.map((m: any) => {
-            const message: IMessage = {
-              id: m.id,
-              message: m.content,
-              sender: {
-                id: m.sender.id,
-                name: m.sender.username,
-                image_path: m.sender.profile_photo.image
-              },
-              receiver: {
-                id: m.receiver.id,
-                name: m.receiver.username,
-                image_path: m.receiver.profile_photo.image
-              },
-              created_at: new Date(m.created_at)
-            };
-            // ws.send(JSON.stringify({
-            //   action: "delivery_receipt_acknowledgement",
-            //   request_id: new Date().getTime(),
-            //   message_id: m.id
-            // }));
-            dispatch(addMessage(message));
-          });
-        } catch (e) {
-          //console.log(event.data);
-        }
-      };
-      ws.onerror = (error) => {
-        //console.log('error', error)
-      };
-
-    };
-
-    wsNotifications.onopen = () => {
-      //console.log("connect to notif");
-      wsNotifications.send(
-        JSON.stringify({
-          action: "list",
-          request_id: new Date().getTime()
-        })
-      );
-      wsNotifications.send(
-        JSON.stringify({
-          action: "subscribe_to_notification_activity",
-          request_id: new Date().getTime()
-        })
-      );
-      wsNotifications.onmessage = (event: WebSocketMessageEvent) => {
-        const response = JSON.parse(event.data);
-        // console.warn('new notif', response)
-        if (response.content) {
-          ws.send(
-            JSON.stringify({
-              action: "list",
-              request_id: new Date().getTime()
-            })
-          );
-        }
-        try {
-          response.data.map((notif: any) => {
-            const newNotification: INotification = {
-              notification_type: notif.notification_type,
-              sender: notif.sender,
-              recipient: notif.recipient,
-              created_at: notif.created_at,
-              content: notif.content,
-              already_send: notif.already_send
-            };
-            dispatch(addNotification(newNotification));
-          });
-        } catch (e) {
-
-        }
-      };
-      ws.onclose = (e) => {
-        // Connection closed
-        //console.log(e.code, e.reason);
-      };
-      wsNotifications.onclose = (e) => {
-        // Connection closed
-        //console.log(e.code, e.reason);
-      };
-    };
-  }, [ws, wsNotifications]);
-  setInterval(() => {
-    ws.send(
-      JSON.stringify({
-        action: "list",
-        request_id: new Date().getTime()
-      })
-    );
-  }, 10000);
+        connectToWsNotificationSocket();
+      }
+      if (authToken && wsNotifications.current?.readyState === WebSocket.OPEN) {
+        wsNotifications!.current!.send(
+          JSON.stringify({
+            action: "list",
+            request_id: new Date().getTime()
+          })
+        );
+      }
+      // clearInterval(wsInterval)
+    }, 5000);
+    setTimeout(() => {
+      connectToWsSocket();
+    }, 2000);
+    setTimeout(() => {
+      connectToWsNotificationSocket();
+    }, 2000);
+  }, [authToken]);
 
   return (
     <Stack.Navigator

@@ -7,6 +7,8 @@ import iconSize from '../../../../../../constants/iconSize';
 import fontSizes from '../../../../../../constants/font-sizes';
 import {BASEURL} from '../../../../../../routes/ApiRoutes';
 import { useNavigation } from "@react-navigation/native";
+import { images } from "../../../../../../constants/images.ts";
+import { widthPercentageToDP } from "react-native-responsive-screen";
 
 type favoritesProps = {
   imageUri: string;
@@ -29,33 +31,37 @@ const Favorite = ({imageUri, userId, userName}: favoritesProps) => {
         width: '100%',
         padding: 5,
         backgroundColor: colors.light,
+        borderBottomWidth: 0.2,
+        borderBottomColor: colors.gray
       }}>
-      <Avatar imageUri={BASEURL + '/' + imageUri} size={'small'} />
+      <Avatar imageUri={imageUri ? imageUri: images.default_image} size={'chat'} />
       <View
         style={{
-          flexDirection: 'column',
+          flexDirection: 'row',
           justifyContent: 'space-between',
+          alignItems: 'center',
           flex: 5,
-          marginTop: 20,
-          marginBottom: 20,
+          paddingLeft: widthPercentageToDP('2%')
         }}>
         <Text style={{fontWeight: 'bold'}}>{userName}</Text>
-        <Text style={{fontSize: fontSizes.text, color: colors.gray}}>
-          Depuis 2 mois
-        </Text>
-      </View>
-      <View
-        style={{
-          flexDirection: 'column',
-          flex: 1,
-          justifyContent: 'center',
-        }}>
         <Icon
-          name={icons.star_outline}
+          name={icons.star}
           size={iconSize.medium}
           color={colors.principal}
         />
       </View>
+      {/*<View*/}
+      {/*  style={{*/}
+      {/*    flexDirection: 'column',*/}
+      {/*    flex: 1,*/}
+      {/*    justifyContent: 'center',*/}
+      {/*  }}>*/}
+      {/*  <Icon*/}
+      {/*    name={icons.star_outline}*/}
+      {/*    size={iconSize.medium}*/}
+      {/*    color={colors.principal}*/}
+      {/*  />*/}
+      {/*</View>*/}
     </TouchableOpacity>
   );
 };

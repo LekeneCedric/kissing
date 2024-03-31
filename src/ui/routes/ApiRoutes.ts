@@ -1,6 +1,6 @@
-export const API_BASEURL = 'http://192.168.43.31:8000/api';
-export const BASEURL = 'http://192.168.43.31:8000';
-export const SOCKET_SERVER_URL = '192.168.43.31:8000';
+export const API_BASEURL = 'https://kissingback-production.up.railway.app/api';
+export const BASEURL = 'https://kissingback-production.up.railway.app';
+export const SOCKET_SERVER_URL = 'kissingback-production.up.railway.app';
 
 export const AuthApiRoutes = {
   signUp: '/users/',

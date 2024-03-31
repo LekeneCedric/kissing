@@ -229,6 +229,7 @@ const MyProfil = () => {
             <Controller
               name={"city"}
               control={control}
+              defaultValue={user.city!}
               render={({ field }) => {
                 return (
                   <SelectComponent
@@ -261,6 +262,7 @@ const MyProfil = () => {
             <Controller
               name={"about"}
               control={control}
+              defaultValue={user.about}
               render={({ field }) => {
                 return (
                   <InputArea
@@ -297,6 +299,7 @@ const MyProfil = () => {
             <Controller
               name={"search_type"}
               control={control}
+              defaultValue={user.search_type}
               render={({ field }) => {
                 return (
                   <SelectComponent

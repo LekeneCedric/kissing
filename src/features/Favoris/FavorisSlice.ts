@@ -36,7 +36,7 @@ export const FavorisSlice = createSlice({
     },
     RemoveUserFromFavorites: (state, {payload}:PayloadAction<number>) => {
       state.favoris_list = state.favoris_list.filter(fav => fav !== payload)
-      state.favoris = state.favoris.filter(fav => fav.user!.id !== payload);
+      state.favoris = state.favoris.filter(fav => fav!.id !== payload);
     }
   },
   extraReducers: builder => {

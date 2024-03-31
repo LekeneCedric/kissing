@@ -54,6 +54,9 @@ export default function useMatchListView(): MatchListViewBehaviour {
       setRefreshing(false);
     });
   }, []);
+  useEffect(() => {
+    console.log('rec-',recommendations);
+  }, [recommendations]);
   const limit = useAppSelector(selectFilterLimit);
   const offset = useAppSelector(selectFilterOffset);
   const city = useAppSelector(selectCityFilterParam);
@@ -94,7 +97,7 @@ export default function useMatchListView(): MatchListViewBehaviour {
   };
   const groupRecommendations = (recommendations: Recommendation[]) => {
     let result = [];
-    for (let i = 0; i < recommendations.length - 1; i += 3) {
+    for (let i = 0; i < recommendations.length; i += 3) {
       result.push(recommendations.slice(i, i + 3));
       // console.log(recommendations.slice(i, i + 3).length)
     }

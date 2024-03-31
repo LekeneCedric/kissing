@@ -25,6 +25,7 @@ import { GetAllFavorisResponse } from "../../../../features/Favoris/thunks/GetAl
 import { GetAllBlockedUsersAsync } from "../../../../features/Blocked/thunks/GetAll/GetAllBlockedUsersAsync.ts";
 import { setupMyUserProfile } from "../../../../features/User/UserSlice.ts";
 import { setMyId } from "../../../../features/Messages/MessagesSlice.ts";
+import { setMyNotificationId } from "../../../../features/Notifications/NotificationSlice.ts";
 
 export interface SignInViewBehaviours {
   form: UseFormReturn<InputSignInForm>;
@@ -61,6 +62,7 @@ export default function   useSignInView(): SignInViewBehaviours {
           ),
         );
         dispatch(setMyId(userDataResponse.payload!.id!));
+        dispatch(setMyNotificationId(userDataResponse.payload!.id!));
         dispatch(GetAllFavorisAsync({}));
         dispatch(GetAllBlockedUsersAsync({}));
         dispatch(GetAllInterestAsync());
@@ -72,7 +74,7 @@ export default function   useSignInView(): SignInViewBehaviours {
         });
       } catch (e) {
         toast.show(
-          'Une erreur est survenue lors du traitement de votre requête, veuillez reessayer !',
+          'Une érreur est survenue lors du traitement de votre opération , veuillez réessayer',
           {
             type: 'danger',
             placement: 'top',
@@ -85,7 +87,7 @@ export default function   useSignInView(): SignInViewBehaviours {
     }
     if (SignInAsync.rejected.match(response)) {
       toast.show(
-        'Une erreur est survenue lors du traitement de votre requête, veuillez reessayer !',
+        'Impossible de se connecter , veuillez réessayer !',
         {
           type: 'danger',
           placement: 'top',

@@ -21,6 +21,8 @@ const MessagesSlice = createSlice({
       state.current_user_id = undefined;
       state.nb_unread_messages = 0;
       state.conversations = []
+      state.my_id = 0;
+      state.current_user_id = 0;
     },
     setMyId: (state, {payload}: PayloadAction<number>) => {
       state.my_id = payload;
@@ -29,22 +31,33 @@ const MessagesSlice = createSlice({
       state.current_user_id = payload;
     },
     addMessage: (state, {payload}: PayloadAction<IMessage>) => {
+      if (state.my_id == 0 ) return;
       // console.warn('my_id', state.my_id);
       let currentConversation: IConversation | undefined = undefined;
-      const iAmReceiver = payload.receiver.id == state.my_id;
-      const correspondingConversation = state.conversations.filter(
+      let iAmReceiver = payload.receiver.id == state.my_id;
+      let iAmSender = payload.sender.id == state.my_id;
+
+      const correspondingConversation = state.conversations.find(
         (conversation:IConversation) => {
-          const userIds = [
-            payload.sender.id,
-            payload.receiver.id,
-          ];
-          return userIds.includes(conversation.user.id)
+          if (iAmReceiver) {
+            return conversation.user.id == payload.sender.id;
+          }
+          if (iAmSender) {
+            return conversation.user.id == payload.receiver.id;
+          }
+          // const userIds = [
+          //   payload.sender.id,
+          //   payload.receiver.id,
+          // ];
+          // return userIds.includes(conversation.user.id)
         });
-      console.warn('corresponding conv', iAmReceiver, payload, correspondingConversation)
-      if (correspondingConversation?.length > 0) {
-        currentConversation = correspondingConversation[0];
+      // console.warn('corresponding conv', iAmReceiver, payload, correspondingConversation)
+      // console.warn('iamreceiver', iAmReceiver)
+
+      if (correspondingConversation) {
+        currentConversation = correspondingConversation;
         const messageAlreadyExist = currentConversation?.messages
-          ?.filter(m => m.id === payload.id)?.length! > 0
+          ?.find(m => m.id === payload.id) !== undefined;
         if (!messageAlreadyExist) {
           currentConversation = {
             ...currentConversation,
@@ -53,9 +66,10 @@ const MessagesSlice = createSlice({
               payload
             ],
             last_message: payload,
-            nb_unread_messages: iAmReceiver ? currentConversation?.nb_unread_messages + 1 : currentConversation?.nb_unread_messages
+            nb_unread_messages: payload.receiver.id == state.my_id ? currentConversation?.nb_unread_messages + 1 : currentConversation?.nb_unread_messages
           }
-          if (iAmReceiver) {
+          if (payload.receiver.id == state.my_id) {
+            console.warn('nb message ++')
             state.nb_unread_messages = state.nb_unread_messages + 1;
           }
           state.conversations = [
@@ -63,17 +77,16 @@ const MessagesSlice = createSlice({
             currentConversation
           ];
         }
-
       } else {
-        const user = iAmReceiver ? payload.sender : payload.receiver;
+        const user = payload.receiver.id == state.my_id ? payload.sender : payload.receiver;
           currentConversation = {
             id: uuid.v4().toString(),
             user: user,
             last_message: payload,
-            nb_unread_messages: iAmReceiver ? 1 : 0,
+            nb_unread_messages: payload.receiver.id == state.my_id ? 1 : 0,
             messages: [payload]
           }
-          if (iAmReceiver) {
+          if (payload.receiver.id == state.my_id) {
             state.nb_unread_messages = state.nb_unread_messages + 1
           }
           state.conversations = [

@@ -6,7 +6,9 @@ import { IConversation } from "../../../../../../../domain/Messages/Messages.ts"
 import { BASEURL } from "../../../../../../routes/ApiRoutes.ts";
 import fontSizes from "../../../../../../constants/font-sizes.ts";
 import { images } from "../../../../../../constants/images.ts";
-
+import TimeAgo from "javascript-time-ago";
+import fr from 'javascript-time-ago/locale/fr'
+TimeAgo.addDefaultLocale(fr)
 
 const Conversation = (
   {
@@ -16,6 +18,7 @@ const Conversation = (
     nb_unread_messages
   }: IConversation
 ) => {
+  const timeAgo = new TimeAgo('fr-FR');
   const navigation = useNavigation();
   return (
     <TouchableOpacity
@@ -48,7 +51,7 @@ const Conversation = (
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           <Text style={{ fontWeight: "bold", fontSize: fontSizes.text }}>{user.name}</Text>
           <Text style={{fontSize: fontSizes.text, color: colors.gray}}>
-            {`${new Date(last_message.created_at).toDateString().split(" ")[0]}   ${String(new Date(last_message.created_at).getHours()).padStart(2, '0')}:${String(new Date(last_message.created_at).getMinutes()).padStart(2, '0')}`}
+            {timeAgo.format(new Date(last_message.created_at))}
           </Text>
         </View>
         <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: '2%'}}>

@@ -63,14 +63,14 @@ export default function useMyProfileView(): useMyProfileViewBehaviour {
 
   const onSubmit = async (data: updateProfileCommand) => {
     const dat = {
-      id: auth!.user!.id,
+      id: user!.id,
       sex: user!.sex!,
-      birthday: '2002-09-30',
       city: data.city !== undefined ? data.city : user!.city,
       about: data.about !== undefined ? data.about : user!.about,
       search_type: data.search_type !== undefined ? data.search_type : user!.search_type,
       interests: data.interests !== undefined ? data.interests : user!.interests,
     } as UpdateProfileCommand;
+    console.warn(dat);
 
     const response = await dispatch(UpdateProfileAsync(dat));
 

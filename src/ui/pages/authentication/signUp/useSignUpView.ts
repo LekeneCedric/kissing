@@ -10,6 +10,9 @@ import {LoadingState} from '../../../../shared/enum/LoadingState';
 import useNavigate from '../../../Global/hooks/useNavigation';
 import {Routes} from '../../../routes/Router';
 import {useToast} from 'react-native-toast-notifications';
+import { GetMyUserProfileAsync } from "../../../../features/User/Thunks/GetMyUserProfile/GetMyUserProfileAsync.ts";
+import { setMyId } from "../../../../features/Messages/MessagesSlice.ts";
+import { setMyNotificationId } from "../../../../features/Notifications/NotificationSlice.ts";
 
 export interface SignUpViewBehaviour {
   form: UseFormReturn<InputSignUpForm>;
@@ -30,6 +33,9 @@ const useSignUpView = (): SignUpViewBehaviour => {
    // console.log(response);
     if (SignUpAsync.fulfilled.match(response)) {
       // navigation.goTo(Routes.Auth.activateAccount);
+      const userDataResponse = await dispatch(GetMyUserProfileAsync({}));
+      dispatch(setMyId(userDataResponse.payload!.id!));
+      dispatch(setMyNotificationId(userDataResponse.payload!.id!));
     }
     if (!SignUpAsync.fulfilled.match(response)) {
       toast.show(

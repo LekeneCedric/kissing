@@ -13,8 +13,8 @@ const Favorites = () => {
       renderItem={info => (
         <Favorite
           userName={info.item.user!.username!}
-          userId={info.item.user!.id!}
-          imageUri={info.item.images![0]?.image}
+          userId={info.item.id!}
+          imageUri={info.item.user!.image_profile!}
         />
       )}
     />

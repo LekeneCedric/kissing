@@ -1,102 +1,124 @@
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import colors from '../constants/colors';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import icons from '../constants/icons';
-import Subscription from '../pages/Home/subscription/Subscription';
-import Chat from '../pages/Home/chat/Chat';
-import Notifications from '../pages/Home/notifications/Notifications';
-import MatchesList from '../pages/Home/matches/MatchesList';
-import Settings from '../pages/Home/Settings/Settings';
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import colors from "../constants/colors";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import icons from "../constants/icons";
+import Subscription from "../pages/Home/subscription/Subscription";
+import Chat from "../pages/Home/chat/Chat";
+import Notifications from "../pages/Home/notifications/Notifications";
+import MatchesList from "../pages/Home/matches/MatchesList";
+import Settings from "../pages/Home/Settings/Settings";
 import { Text, View } from "react-native";
 import { useAppSelector } from "../../app/hook.ts";
 import { selectNbUnreadMessages } from "../../features/Messages/MessagesSelectors.ts";
 import { useEffect } from "react";
 import fontSizes from "../constants/font-sizes.ts";
+import { selectNbUnreadNotifications } from "../../features/Notifications/NotificationsSelector.ts";
 
 const Tab = createBottomTabNavigator();
 const HomeScreen = () => {
 
   const nbUnreadMessage = useAppSelector(selectNbUnreadMessages);
+  const nbUnreadNotifications = useAppSelector(selectNbUnreadNotifications);
   useEffect(() => {
     //console.log('unread-messages',nbUnreadMessage)
   }, []);
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarActiveTintColor: colors.principal,
+        tabBarActiveTintColor: colors.principal
       }}>
       <Tab.Screen
-        name={'Matches'}
+        name={"Matches"}
         component={MatchesList}
         options={{
           headerShown: false,
-          tabBarLabel: '',
-          tabBarIcon: ({color, size}) => (
+          tabBarLabel: "",
+          tabBarIcon: ({ color, size }) => (
             <Icon name={icons.love} size={size} color={color} />
-          ),
+          )
         }}
       />
 
       <Tab.Screen
-        name={'Chat'}
+        name={"Chat"}
         component={Chat}
         options={{
           headerShown: false,
-          tabBarLabel: '',
-          tabBarIcon: ({color, size}) => (
-            <View style={{position: 'relative'}}>
+          tabBarLabel: "",
+          tabBarIcon: ({ color, size }) => (
+            <View style={{ position: "relative" }}>
               <View style={{
-                position: 'absolute',
+                position: "absolute",
                 borderRadius: 100,
-                padding: '2%',
-                width: '20%',
+                padding: "2%",
+                width: "20%",
                 zIndex: 2,
                 backgroundColor: colors.red,
-                top: '-1%',
-                right: '-1%',
-                alignItems: 'center',
-                justifyContent: 'center',
+                top: "-1%",
+                right: "-1%",
+                alignItems: "center",
+                justifyContent: "center",
                 opacity: nbUnreadMessage > 0 ? 1 : 0
               }}>
-              <Text style={{fontSize: fontSizes.info, color: colors.light}}>{nbUnreadMessage}</Text>
+                <Text style={{ fontSize: fontSizes.info, color: colors.light }}>{nbUnreadMessage}</Text>
               </View>
               <Icon name={icons.chat} size={size} color={color} />
             </View>
-          ),
+          )
         }}
       />
 
       <Tab.Screen
-        name={'Notifications'}
+        name={"Notifications"}
         component={Notifications}
         options={{
           headerShown: false,
-          tabBarLabel: '',
-          tabBarIcon: ({color, size}) => (
-            <Icon name={icons.notifications} size={size} color={color} />
-          ),
+          tabBarLabel: "",
+          tabBarIcon: ({ color, size }) => (
+            <View style={{ position: "relative" }}>
+              <View style={{
+                position: "absolute",
+                borderRadius: 100,
+                padding: "2%",
+                width: "20%",
+                zIndex: 2,
+                backgroundColor: colors.red,
+                top: "-1%",
+                right: "-1%",
+                alignItems: "center",
+                justifyContent: "center",
+                opacity: nbUnreadNotifications > 0 ? 1 : 0
+              }}>
+                <Text style={{ fontSize: fontSizes.info, color: colors.light }}>{nbUnreadNotifications}</Text>
+              </View>
+              <Icon name={icons.notifications} size={size} color={color} />
+            </View>
+          )
+          // tabBarIcon: ({color, size}) => (
+          //   <Icon name={icons.notifications} size={size} color={color} />
+          // ),
         }}
       />
       <Tab.Screen
-        name={'Subsciption'}
+        name={"Subsciption"}
         component={Subscription}
         options={{
           headerShown: false,
-          tabBarLabel: '',
-          tabBarIcon: ({color, size}) => (
+          tabBarLabel: "",
+          tabBarIcon: ({ color, size }) => (
             <Icon name={icons.subscription} size={size} color={color} />
-          ),
+          )
         }}
       />
       <Tab.Screen
-        name={'settings'}
+        name={"settings"}
         component={Settings}
         options={{
           headerShown: false,
-          tabBarLabel: '',
-          tabBarIcon: ({color, size}) => (
+          tabBarLabel: "",
+          tabBarIcon: ({ color, size }) => (
             <Icon name={icons.settings} size={size} color={color} />
-          ),
+          )
         }}
       />
     </Tab.Navigator>

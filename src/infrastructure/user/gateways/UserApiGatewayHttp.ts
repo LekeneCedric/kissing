@@ -31,7 +31,6 @@ export class UserApiGatewayHttp extends HttpProvider implements UserApiGateway {
     let result: any;
     const formdata = new FormData();
     formdata.append('id',updateProfileCommand.id);
-    formdata.append('birthday',updateProfileCommand.birthday);
     formdata.append('about',updateProfileCommand.about);
     formdata.append('city',updateProfileCommand.city);
     formdata.append('sex',updateProfileCommand.sex);

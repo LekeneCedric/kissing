@@ -2,7 +2,10 @@ import { RootState } from "../../app/store.ts";
 import { User } from "../../domain/User/User.ts";
 
 export const selectConversations = (state: RootState) => {
-  return state.messagesReducer.conversations;
+  const sortedConv = state.messagesReducer.conversations.map(chat => ({ ...chat }));
+  return sortedConv.sort((a,b) => {
+    return new Date(b.last_message.created_at).getTime() - new Date(a.last_message.created_at).getTime()
+  });
 }
 
 export const selectMessages = (state: RootState) => {
