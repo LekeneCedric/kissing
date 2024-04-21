@@ -14,7 +14,9 @@ export const RecoverPasswordConfirmationAsync = createAsyncThunk<
       return await authApiGatewayHttp.recoverPasswordConfirmation(recoverPasswordConfirmationCommand);
     } catch (error) {
       const err = error as any;
-      const result: any = {};
+      const result: any = {
+        message: err
+      };
       return thunkApi.rejectWithValue(result);
     }
   }

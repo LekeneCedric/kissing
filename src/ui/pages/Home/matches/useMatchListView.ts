@@ -19,10 +19,10 @@ import {
   selectSearchTypeFilterParam,
 } from '../../../../features/Recommendations/RecommendationsSelectors';
 import {
-  cleanRecommendations,
+  cleanRecommendations, growOffsetBy,
   nextRecommendations,
-  resetFiltersParams,
-} from '../../../../features/Recommendations/RecommendationsSlice';
+  resetFiltersParams
+} from "../../../../features/Recommendations/RecommendationsSlice";
 
 export interface MatchListViewBehaviour {
   matches: Recommendation[];

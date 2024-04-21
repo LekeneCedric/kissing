@@ -6,7 +6,7 @@ import {
   selectAuth,
   selectUser,
 } from '../../../../features/auth/thunks/AuthenticationSelectors';
-import {useEffect} from 'react';
+import React, { useEffect, useState } from "react";
 import {User} from '../../../../domain/User/User';
 import {useNavigation} from '@react-navigation/native';
 import {cleanFavoris} from '../../../../features/Favoris/FavorisSlice';
@@ -18,6 +18,7 @@ import { cleanBlocked } from "../../../../features/Blocked/BlockedSlice.ts";
 import { BASEURL } from "../../../routes/ApiRoutes.ts";
 import { Auth } from "../../../../domain/Auth/Auth.ts";
 import { clearNotification } from "../../../../features/Notifications/NotificationSlice.ts";
+import { Alert } from "react-native";
 
 type MenuList = {
   icon: string;
@@ -31,6 +32,9 @@ interface useSettingsViewBehaviour {
   user: User;
   auth: Auth,
   goToMyProfile: () => void;
+  wantToLogout: boolean;
+  setWantToLogout: React.Dispatch<React.SetStateAction<boolean>>;
+  logout: () => void;
 }
 
 export default function useSettingsView(): useSettingsViewBehaviour {
@@ -38,6 +42,7 @@ export default function useSettingsView(): useSettingsViewBehaviour {
   const user = useAppSelector(selectUser);
   const auth = useAppSelector(selectAuth);
   const navigation = useNavigation();
+  const [wantToLogout, setWantToLogout] = useState<boolean>(false)
   useEffect(() => {
     // console.log(BASEURL + user!.image_profile);
   }, []);
@@ -104,7 +109,7 @@ export default function useSettingsView(): useSettingsViewBehaviour {
       icon: icons.logout,
       title: 'Déconnexion',
       description: '',
-      action: logout,
+      action: () => {setWantToLogout(true)},
       color: colors.principal,
     },
   ];
@@ -114,5 +119,8 @@ export default function useSettingsView(): useSettingsViewBehaviour {
     user: user!,
     auth: auth!,
     goToMyProfile: goToUserProfil,
+    wantToLogout: wantToLogout,
+    setWantToLogout: setWantToLogout,
+    logout: logout,
   };
 }

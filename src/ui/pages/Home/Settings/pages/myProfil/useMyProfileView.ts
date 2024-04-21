@@ -103,11 +103,11 @@ export default function useMyProfileView(): useMyProfileViewBehaviour {
       let new_images = user?.images!.map(
         i => {return {image: i.image, is_main_photo:true}})
       //@ts-ignore
-      navigation.navigate('galerie', { images: new_images });
+      navigation.navigate('galerie', { images: new_images, isGalerie: true });
     }
     if (image) {
       //@ts-ignore
-      navigation.navigate('galerie', { images: [{ ...image, is_main_photo: true }] });
+      navigation.navigate('galerie', { images: [{ ...image, is_main_photo: true }], isGalerie: true });
     }
   };
   const removeImageToGalerie = async (imageId: number) => {

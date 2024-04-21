@@ -163,26 +163,27 @@ export const UserSlice = createSlice({
       .addCase(
         UploadProfileImageAsync.fulfilled,
         (state, { payload }: PayloadAction<UploadProfileImageResponse>) => {
+          console.warn('upload',payload)
           state.loading = LoadingState.success;
           // console.warn(payload);
-          const imagesFiltered = state.user!.images!.filter(i => {
-              return i.is_main_photo === false
-          });
-          const newImages = [
-            ...imagesFiltered,
-          ]
-          if (!payload.is_main_photo) {
-            newImages.push(
-              { id: payload.id, image: payload.image, is_main_photo: payload.is_main_photo }
-            )
-          }
-          state.user = {
-            ...state.user,
-            image_profile: payload.is_main_photo ? payload.image : state.user!.image_profile ,
-            images: [
-              ...newImages
-            ]
-          };
+          // const imagesFiltered = state.user!.images!.filter(i => {
+          //     return i.is_main_photo === false
+          // });
+          // const newImages = [
+          //   ...imagesFiltered,
+          // ]
+          // if (!payload.is_main_photo) {
+          //   newImages.push(
+          //     { id: payload.id, image: payload.image, is_main_photo: payload.is_main_photo }
+          //   )
+          // }
+          // state.user = {
+          //   ...state.user,
+          //   image_profile: payload.is_main_photo ? payload.image : state.user!.image_profile ,
+          //   images: [
+          //     ...newImages
+          //   ]
+          // };
           // console.warn(state.user.images!.filter(f => f.is_main_photo==true));
         }
       )
@@ -229,7 +230,6 @@ export const UserSlice = createSlice({
           birthday: payload.birthday,
           about: payload.about,
           sex: payload.sex,
-          age: payload.age,
           search_type: payload.search_type,
           city: payload.city,
           interests: payload.interests

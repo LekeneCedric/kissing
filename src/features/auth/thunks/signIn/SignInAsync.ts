@@ -12,7 +12,9 @@ export const SignInAsync = createAsyncThunk<SignInResponse, signInCommand>(
       return await authApiGatewayHttp.signIn(SignInCommand);
     } catch (error) {
       const err = error as any;
-      const result: any = {};
+      const result: any = {
+        message: err
+      };
       return thunkApi.rejectWithValue(result);
     }
   },

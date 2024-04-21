@@ -50,7 +50,7 @@ export default function   useSignInView(): SignInViewBehaviours {
     if (SignInAsync.fulfilled.match(response)) {
       try {
         const userDataResponse = await dispatch(GetMyUserProfileAsync({}));
-        console.log(userDataResponse.payload);
+        console.log('my-data12013',userDataResponse.payload);
         dispatch(
           setupMyAuthUserProfile(
             userDataResponse.payload as GetMyUserProfileResponse,
@@ -74,7 +74,7 @@ export default function   useSignInView(): SignInViewBehaviours {
         });
       } catch (e) {
         toast.show(
-          'Une érreur est survenue lors du traitement de votre opération , veuillez réessayer',
+          e as string,
           {
             type: 'danger',
             placement: 'top',
@@ -86,8 +86,9 @@ export default function   useSignInView(): SignInViewBehaviours {
       }
     }
     if (SignInAsync.rejected.match(response)) {
+
       toast.show(
-        'Impossible de se connecter , veuillez réessayer !',
+        response?.payload?.message?.message,
         {
           type: 'danger',
           placement: 'top',

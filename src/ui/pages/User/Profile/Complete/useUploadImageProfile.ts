@@ -57,7 +57,7 @@ const useUploadImageProfile = (): useUploadImageProfileBehavior => {
   const uploadImage = async (data: UploadProfileImageCommand) => {
     const response = await dispatch(UploadProfileImageAsync(data));
     if (UploadProfileImageAsync.fulfilled.match(response)) {
-      toast.show('Image importée avec succès', {
+      toast.show('Image importée avec succès !', {
         type: 'success',
         placement: 'top',
         duration: 2000,
@@ -66,7 +66,7 @@ const useUploadImageProfile = (): useUploadImageProfileBehavior => {
     }
     if (!UploadProfileImageAsync.fulfilled.match(response)) {
       toast.show(
-        'Votre image semble être incompatible , reessayez avec une autre !',
+        'Erreur lors de l\'importation , veuillez réessayer !',
         {
           type: 'danger',
           placement: 'top',
@@ -78,7 +78,7 @@ const useUploadImageProfile = (): useUploadImageProfileBehavior => {
   };
   const uploadImageAction = async (is_main_profile: boolean = false) => {
     const result = await launchImageLibrary({
-      quality: 1,
+      quality: 0.5,
       mediaType: 'photo',
       includeBase64: true,
     });

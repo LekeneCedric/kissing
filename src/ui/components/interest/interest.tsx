@@ -22,9 +22,9 @@ const Interest = ({iconName, interestName}: props) => {
         borderRadius: 10,
         margin: wp('1%'),
         padding: wp('1%'),
+        justifyContent: 'center',
         overflow: 'hidden',
       }}>
-      <Icon color={colors.gray} name={iconName} size={iconSize.normal} />
       <Text style={{fontSize: fontSizes.text, color: colors.gray}}>
         {interestName.length > 10
           ? `${interestName.slice(1, 10)}...`

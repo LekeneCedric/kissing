@@ -6,6 +6,7 @@ import fontSizes from '../../../../../../../constants/font-sizes';
 import { UserDetail } from "../../../../../../../../domain/User/User.ts";
 import { BASEURL } from "../../../../../../../routes/ApiRoutes.ts";
 import { images } from "../../../../../../../constants/images.ts";
+import details from "../../../../../matches/components/Matche/Details/Details.tsx";
 
 type props = {
   data: UserDetail,
@@ -17,7 +18,7 @@ const BlockedUser = ({data, deblock}: props) => {
       <Avatar
         size={'small'}
         imageUri={
-          data.user!.images?.length! > 0 ?BASEURL+'/'+data.user!.images![0].image : images.default_image
+          data.images?.find(i => i.is_main_photo) ? `${BASEURL}${data.images!.find(i => i.is_main_photo)?.image!}` : images.default_image
         }
       />
       <View
@@ -27,7 +28,7 @@ const BlockedUser = ({data, deblock}: props) => {
           margin: 10,
           width: '100%'
         }}>
-        <Text style={styles.userName}> {`${data.user?.username}, ${data.user?.age}`}</Text>
+        <Text style={styles.userName}> {`${data.user?.username}, ${data?.user?.age ? data.user.age : data.age}`}</Text>
         <TouchableOpacity
           onPress={() => {deblock(data.id!)}}
           style={{

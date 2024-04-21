@@ -65,3 +65,8 @@ export interface Recommendation {
   search_type: string;
   images: Image[];
 }
+export const DefaultRecommendationsParams = {
+  NUMBER_PEER_PAGES: 15,
+  MIN_OLD: 18,
+  MAX_OLD: 77,
+}

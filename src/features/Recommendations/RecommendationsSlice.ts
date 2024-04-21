@@ -1,8 +1,9 @@
 import {LoadingState} from '../../shared/enum/LoadingState';
-import {Recommendation} from '../../domain/User/User';
+import { DefaultRecommendationsParams, Recommendation } from "../../domain/User/User";
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {GetRecommendationsAsync} from '../User/Thunks/GetUserRecommandations/GetRecommendationsAsync';
 import {GetRecommendationsResponse} from '../User/Thunks/GetUserRecommandations/GetRecommendationsResponse';
+
 
 interface RecommendationsState {
   loading: LoadingState;
@@ -19,10 +20,10 @@ interface RecommendationsState {
 const initialState: RecommendationsState = {
   loading: LoadingState.idle,
   recommendations: [],
-  limit: 3,
+  limit: DefaultRecommendationsParams.NUMBER_PEER_PAGES,
   offset: 0,
-  min_old: 18,
-  max_old: 25,
+  min_old: DefaultRecommendationsParams.MIN_OLD,
+  max_old: DefaultRecommendationsParams.MAX_OLD,
 };
 export const RecommendationsSlice = createSlice({
   name: 'recommendationsSlice',
@@ -34,22 +35,32 @@ export const RecommendationsSlice = createSlice({
     resetFiltersParams: state => {
       state.recommendations = [];
       state.offset = 0;
-      state.limit = 3;
+      state.limit = DefaultRecommendationsParams.NUMBER_PEER_PAGES;
       state.city = undefined;
       state.search_type = undefined;
       state.interests = undefined;
-      state.min_old = 18;
-      state.max_old = 35;
+      state.min_old = DefaultRecommendationsParams.MIN_OLD;
+      state.max_old = DefaultRecommendationsParams.MAX_OLD;
+    },
+    growLimitBy: (state, {payload}: PayloadAction<number>) => {
+      state.limit = state.limit + payload;
+    },
+    growOffsetBy: (state, {payload}: PayloadAction<number>) => {
+      state.offset = state.offset + payload;
     },
     nextRecommendations: state => {
-      state.offset = state.offset + 3;
+      state.offset = state.offset + DefaultRecommendationsParams.NUMBER_PEER_PAGES;
       //console.log(`limit : ${state.limit} , offset : ${state.offset}`);
     },
     updateCityFilter: (state, {payload}: PayloadAction<string>) => {
-      state.city = payload;
+      state.city = payload;;
+      state.offset = 0;
+      state.limit = DefaultRecommendationsParams.NUMBER_PEER_PAGES;
     },
     updateSearchTypeFilter: (state, {payload}: PayloadAction<string>) => {
-      state.search_type = payload;
+      state.search_type = payload;;
+      state.offset = 0;
+      state.limit = DefaultRecommendationsParams.NUMBER_PEER_PAGES;
     },
     updateInterestsFilter: (state, {payload}: PayloadAction<number>) => {
       if (state.interests !== undefined) {
@@ -61,20 +72,29 @@ export const RecommendationsSlice = createSlice({
       }
       if (state.interests === undefined) {
         state.interests = [payload];
-      }
+      };
+      state.offset = 0;
+      state.limit = DefaultRecommendationsParams.NUMBER_PEER_PAGES;
     },
     updateMinOldFilter: (state, {payload}: PayloadAction<number>) => {
       state.min_old = payload;
       if (state.min_old > state.max_old) {
         state.max_old = state.min_old;
-      }
+      };
+      state.offset = 0;
+      state.limit = DefaultRecommendationsParams.NUMBER_PEER_PAGES;
     },
     updateMaxOldFilter: (state, {payload}: PayloadAction<number>) => {
       state.max_old = payload;
       if (state.max_old < state.min_old) {
         state.max_old = state.min_old;
-      }
+      };
+      state.offset = 0;
+      state.limit = DefaultRecommendationsParams.NUMBER_PEER_PAGES;
     },
+    RemoveOnRecommendation: (state, {payload}: PayloadAction<number>) => {
+      state.recommendations = state.recommendations.filter(r => r.id !== payload);
+    }
   },
   extraReducers: builder => {
     builder
@@ -92,10 +112,11 @@ export const RecommendationsSlice = createSlice({
           if (state.recommendations.length === 0) {
             state.recommendations = [...payload.results!];
           } else {
-            const newRecommendationsIds = payload.results.map(r_ => r_.id)
+            const currentRecommendationsIds = state.recommendations.map(r => r.id);
+            const newRecommendations = payload.results.filter(r => !currentRecommendationsIds.includes(r.id))
             state.recommendations = [
-              ...state.recommendations.filter(r => !newRecommendationsIds.includes(r.id)),
-              ...payload.results!,
+              ...state.recommendations,
+              ...newRecommendations,
             ];
           }
         },
@@ -114,6 +135,8 @@ export const {
   updateInterestsFilter,
   updateMinOldFilter,
   updateMaxOldFilter,
+  growOffsetBy,
+  RemoveOnRecommendation,
 } = RecommendationsSlice.actions;
 
 export default RecommendationsSlice.reducer;

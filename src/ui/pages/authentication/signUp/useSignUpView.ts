@@ -38,8 +38,9 @@ const useSignUpView = (): SignUpViewBehaviour => {
       dispatch(setMyNotificationId(userDataResponse.payload!.id!));
     }
     if (!SignUpAsync.fulfilled.match(response)) {
+      console.log(response?.payload)
       toast.show(
-        'Une erreur est survenue lors du traitement de votre requète , reessayez !',
+        response?.payload?.message?.message,
         {
           type: 'danger',
           placement: 'top',

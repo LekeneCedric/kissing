@@ -52,7 +52,7 @@ function MainScreens(): JSX.Element {
   const toast = useToast();
   const ws = useRef<WebSocket | null>(null);
   const wsNotifications = useRef<WebSocket | null>(null);
-
+  const interval = useRef<any>(null);
   const addMessages = async (messages: IMessageGiftedChat[], data: { id: any, name: any, image_path: any }) => {
     const newMessage: IMessage = {
       id: uuid.v4().toString(),
@@ -98,6 +98,7 @@ function MainScreens(): JSX.Element {
   };
 
   const connectToWsSocket = () => {
+    console.warn('socket: try-connect')
     if (authToken && ws.current === null) {
       ws.current = new WebSocket("wss://" + SOCKET_SERVER_URL + "/ws/chat/?token=" + authToken);
     }
@@ -152,6 +153,7 @@ function MainScreens(): JSX.Element {
   };
 
   const connectToWsNotificationSocket = () => {
+    console.log('socket:notif try to connect');
     if (authToken && wsNotifications.current === null) {
       wsNotifications.current = new WebSocket("wss://" + SOCKET_SERVER_URL + "/ws/notifications/?token=" + authToken);
     }
@@ -161,11 +163,13 @@ function MainScreens(): JSX.Element {
         wsNotifications.current = new WebSocket("wss://" + SOCKET_SERVER_URL + "/ws/notifications/?token=" + authToken);
       }
       wsNotifications.current!.onopen = () => {
-        //console.log("connect to notif");
+        console.log("connect to notif");
         if (wsNotifications.current!.readyState === WebSocket.OPEN) {
+          console.warn('notif-is-connect')
           wsNotifications.current!.onmessage = (event: WebSocketMessageEvent) => {
-
             const response = JSON.parse(event.data);
+            console.log('notif-new-message', response);
+
             // console.warn('new notif', response)
             response.data.map((notif: any) => {
               const newNotification: INotification = {
@@ -186,19 +190,27 @@ function MainScreens(): JSX.Element {
       wsNotifications.current!.onclose = (e: any) => {
         connectToWsNotificationSocket();
       };
+      wsNotifications.current!.onerror = (e: any) => {
+        console.log('socket-notif-err', e)
+      }
     }
   };
-
-  useEffect(() => {
-    dispatch(setMyId(myId!));
-    dispatch(setMyNotificationId(myId!));
-    setInterval(() => {
+  const connectionCheck = () => {
+    setTimeout(() => {
+      connectToWsSocket();
+    }, 2000);
+    setTimeout(() => {
+      connectToWsNotificationSocket();
+    }, 2000);
+    clearInterval(interval.current);
+    interval.current = setInterval(() => {
+      console.log('interval', interval.current)
       console.warn("token:", authToken);
-      if (authToken && ws.current === null) {
-        console.warn("socket:create");
-        ws.current = new WebSocket("wss://" + SOCKET_SERVER_URL + "/ws/chat/?token=" + authToken);
-        connectToWsSocket();
-      }
+      // if (authToken && ws.current === null) {
+      //   console.warn("socket:create");
+      //   ws.current = new WebSocket("wss://" + SOCKET_SERVER_URL + "/ws/chat/?token=" + authToken);
+      //   connectToWsSocket();
+      // }
       if (authToken && ws.current?.readyState === WebSocket.OPEN) {
         ws!.current!.send(
           JSON.stringify({
@@ -207,12 +219,11 @@ function MainScreens(): JSX.Element {
           })
         );
       }
-      if (authToken && wsNotifications.current === null) {
-        console.warn("socket:create");
-        wsNotifications.current = new WebSocket("wss://" + SOCKET_SERVER_URL + "/ws/notifications/?token=" + authToken);
-
-        connectToWsNotificationSocket();
-      }
+      // if (authToken && wsNotifications.current === null) {
+      //   console.warn("socket-notif:create");
+      //   wsNotifications.current = new WebSocket("wss://" + SOCKET_SERVER_URL + "/ws/notifications/?token=" + authToken);
+      //   connectToWsNotificationSocket();
+      // }
       if (authToken && wsNotifications.current?.readyState === WebSocket.OPEN) {
         wsNotifications!.current!.send(
           JSON.stringify({
@@ -223,12 +234,12 @@ function MainScreens(): JSX.Element {
       }
       // clearInterval(wsInterval)
     }, 5000);
-    setTimeout(() => {
-      connectToWsSocket();
-    }, 2000);
-    setTimeout(() => {
-      connectToWsNotificationSocket();
-    }, 2000);
+  }
+
+  useEffect(() => {
+    dispatch(setMyId(myId!));
+    dispatch(setMyNotificationId(myId!));
+    connectionCheck()
   }, [authToken]);
 
   return (

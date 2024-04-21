@@ -58,7 +58,7 @@ export const useRecoverPasswordConfirmation = (): useRecoverPasswordConfirmation
       }
       if (RecoverPasswordConfirmationAsync.rejected.match(response)) {
         toast.show(
-          'Une erreur est survenue lors du traitement de votre requête, veuillez reessayer !',
+          response?.payload?.message?.message,
           {
             type: 'danger',
             placement: 'top',

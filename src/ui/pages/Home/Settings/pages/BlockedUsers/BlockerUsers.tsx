@@ -52,16 +52,18 @@ const BlockerUsers = () => {
           Utilisateurs bloqués
         </Text>
       </View>
+      <View
+        style={{flexDirection: 'row', alignItems: 'center', marginTop: 20}}>
+        <View style={{borderWidth: 1, flex: 1, borderColor: colors.gray}} />
+        <Text style={{fontSize: fontSizes.description, color: colors.gray}}>
+          {' '}
+          Liste des utilisateurs bloqués !{' '}
+        </Text>
+        <View style={{borderWidth: 1, flex: 1, borderColor: colors.gray}} />
+      </View>
+
       <ScrollView>
-        <View
-          style={{flexDirection: 'row', alignItems: 'center', marginTop: 20}}>
-          <View style={{borderWidth: 1, flex: 1, borderColor: colors.gray}} />
-          <Text style={{fontSize: fontSizes.description, color: colors.gray}}>
-            {' '}
-            Cette année{' '}
-          </Text>
-          <View style={{borderWidth: 1, flex: 1, borderColor: colors.gray}} />
-        </View>
+
         {
           blockedUsers.map(details => {
             return (

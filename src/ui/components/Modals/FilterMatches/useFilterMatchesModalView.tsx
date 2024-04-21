@@ -15,6 +15,7 @@ import {
 import CameroonCities from '../../../../shared/constants/cameroonCities';
 import {items} from '../../select/SelectComponent/SimpleSelectComponent';
 import {searchTypes} from '../../../../shared/constants/searchType';
+import { DefaultRecommendationsParams } from "../../../../domain/User/User.ts";
 
 export type useFilterMatchesModalViewBehaviour = {
   updateCityFilterParam: (city: string) => void;
@@ -46,14 +47,14 @@ export default function useFilterMatchesModalView(): useFilterMatchesModalViewBe
   const minOldFilterParam =
     useAppSelector(selectMinOldFilterParam) !== undefined
       ? useAppSelector(selectMinOldFilterParam)
-      : 18;
+      : DefaultRecommendationsParams.MIN_OLD;
   const updateMinOldFilterParam = (min_old: number) => {
     dispatch(updateMinOldFilter(min_old));
   };
   const maxOldFilterParam =
     useAppSelector(selectMaxOldFilterParam) !== undefined
       ? useAppSelector(selectMaxOldFilterParam)
-      : 25;
+      : DefaultRecommendationsParams.MAX_OLD;
   const updateMaxOldFilterParam = (max_old: number) => {
     dispatch(updateMaxOldFilter(max_old));
   };

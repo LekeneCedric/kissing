@@ -76,13 +76,9 @@ const interestsSelect = ({
                       borderRadius: 10,
                       margin: wp('1%'),
                       padding: wp('1%'),
+                      justifyContent: 'center'
                     }}>
-                    <Icon
-                      color={textColor}
-                      name={interest.icon_name}
-                      size={iconSize.normal}
-                    />
-                    <Text style={{fontSize: fontSizes.text, color: textColor}}>
+                    <Text style={{fontSize: fontSizes.text, textAlign: 'center', color: textColor}}>
                       {interest.name}
                     </Text>
                   </TouchableOpacity>

@@ -24,6 +24,7 @@ import {
 import { AddBlockedUserAsync } from "../../../../../../../features/Blocked/thunks/Add/AddBlockedUserAsync.ts";
 import { AddBlockedUser, RemoveBlockedUser } from "../../../../../../../features/Blocked/BlockedSlice.ts";
 import { RemoveBlockedUserAsync } from "../../../../../../../features/Blocked/thunks/Remove/RemoveBlockedUserAsync.ts";
+import { RemoveOnRecommendation } from "../../../../../../../features/Recommendations/RecommendationsSlice.ts";
 
 interface myProfileDetailsBehaviour {
   goBack: () => void;
@@ -38,6 +39,8 @@ interface myProfileDetailsBehaviour {
   removeToBlocked: () => void;
   blocked_loading: LoadingState;
   in_blocked_list: boolean;
+  profileImage: Image|undefined,
+  otherImages: Image[]
 }
 
 export default function useMyProfileDetails(): myProfileDetailsBehaviour {
@@ -46,6 +49,8 @@ export default function useMyProfileDetails(): myProfileDetailsBehaviour {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const [userDetails, setUserDetails] = useState<UserDetail | null>(null);
+  const [profileImage, setProfileImage] = useState<Image|undefined>();
+  const [otherImages, setOtherImages] = useState<Image[]>([]);
   const favoris_loading = useAppSelector(selectFavorisLoading);
   const favoris_list = useAppSelector(selectFavorisList);
   //@ts-ignore
@@ -59,12 +64,20 @@ export default function useMyProfileDetails(): myProfileDetailsBehaviour {
   };
   const navigateToGalerie = (image?: Image) => {
     if (!image) {
+      let imagesToGalerie = [];
+      if (profileImage) {
+        imagesToGalerie.push(profileImage);
+      }
+      if (otherImages) {
+        imagesToGalerie.push(...otherImages);
+      }
+      if (imagesToGalerie.length < 1) return ;
       //@ts-ignore
-      navigation.navigate("galerie", { images: userDetails?.images });
+      navigation.navigate("galerie", { images: imagesToGalerie ,isGalerie: false });
     }
     if (image) {
       //@ts-ignore
-      navigation.navigate("galerie", { images: [image] });
+      navigation.navigate("galerie", { images: [image] ,isGalerie: false });
     }
   };
   const addToBlocked = async() => {
@@ -75,6 +88,7 @@ export default function useMyProfileDetails(): myProfileDetailsBehaviour {
 
     if (AddBlockedUserAsync.fulfilled.match(response)) {
       dispatch(AddBlockedUser(userDetails!));
+      dispatch(RemoveOnRecommendation(userDetails?.id!))
       toast.show("Bloqué avec succès !", {
         type: "success",
         placement: "top",
@@ -193,8 +207,11 @@ export default function useMyProfileDetails(): myProfileDetailsBehaviour {
       const userId = params?.userId;
       const response = await dispatch(GetUserProfileAsync({ id: userId }));
       if (GetUserProfileAsync.fulfilled.match(response)) {
-       // console.log('code237-user-details',response.payload);
+       console.log('code237-user-details',response.payload);
         setUserDetails(response.payload);
+        setProfileImage(response.payload.images.find(i => i.is_main_photo))
+        const otherImages = response.payload.images.filter(i => !i.is_main_photo);
+        setOtherImages(otherImages.length > 0 ? otherImages : [] )
        // console.log(response.payload.user.username);
       }
     };
@@ -216,5 +233,7 @@ export default function useMyProfileDetails(): myProfileDetailsBehaviour {
     removeToBlocked: removetoBlocked,
     blocked_loading: blocked_loading,
     in_blocked_list: inBlockedList,
+    profileImage: profileImage,
+    otherImages: otherImages
   };
 }

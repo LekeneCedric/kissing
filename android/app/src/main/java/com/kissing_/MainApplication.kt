@@ -1,4 +1,4 @@
-package com.kissing
+package com.kissing_
 
 import android.app.Application
 import com.facebook.react.PackageList

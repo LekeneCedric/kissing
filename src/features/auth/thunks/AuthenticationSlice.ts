@@ -41,6 +41,7 @@ export const AuthenticationSlice = createSlice({
       }
     },
     cleanAuth: state => {
+      state.auth ? state.auth.token = undefined : null;
       state.auth = undefined;
       state.loading = initialState.loading;
     },

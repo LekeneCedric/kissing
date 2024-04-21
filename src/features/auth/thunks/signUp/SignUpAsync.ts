@@ -13,7 +13,9 @@ export const SignUpAsync = createAsyncThunk<SignUpResponse, signUpCommand>(
       return await authApiGatewayHttp.signUp(signUpCommand);
     } catch (error) {
       const err = error as any;
-      const result: any = {};
+      const result: any = {
+        message: err
+      };
       return thunkApi.rejectWithValue(result);
     }
   },

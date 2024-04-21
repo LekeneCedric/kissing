@@ -99,7 +99,7 @@ const HomeScreen = () => {
           // ),
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name={"Subsciption"}
         component={Subscription}
         options={{
@@ -109,7 +109,7 @@ const HomeScreen = () => {
             <Icon name={icons.subscription} size={size} color={color} />
           )
         }}
-      />
+      /> */}
       <Tab.Screen
         name={"settings"}
         component={Settings}

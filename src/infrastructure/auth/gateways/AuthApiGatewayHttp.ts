@@ -48,7 +48,8 @@ export class AuthApiGatewayHttp extends HttpProvider implements AuthApiGateway {
       //@ts-ignore
       result = response.data;
     } catch (error) {
-      console.error('Error:', error);
+      console.log('err-sign', error);
+      throw new Error(JSON.stringify(error.response.data));
     }
 
     return SignUpResponseFactoryFromApi(result);
@@ -70,8 +71,7 @@ export class AuthApiGatewayHttp extends HttpProvider implements AuthApiGateway {
       //@ts-ignore
       result = response.data;
     } catch (error) {
-      //console.log(error);
-      throw new Error('');
+      throw new Error(error.response.data.detail);
     }
 
     return SignInResponseFactoryFromApi(result);
@@ -96,7 +96,7 @@ export class AuthApiGatewayHttp extends HttpProvider implements AuthApiGateway {
       //@ts-ignore
       result = response.data;
     } catch (error) {
-      throw new Error('');
+      throw new Error(error.response.data.detail);
     }
 
     return SendCodeVerificationResponseFactoryFromApi(result);
@@ -126,7 +126,7 @@ export class AuthApiGatewayHttp extends HttpProvider implements AuthApiGateway {
       //@ts-ignore
       result = response.data;
     } catch (error) {
-      throw new Error('');
+      throw new Error(error.response.data.detail);
     }
 
     return ActivateAccountResponseFactoryFromApi(result);
@@ -148,7 +148,7 @@ export class AuthApiGatewayHttp extends HttpProvider implements AuthApiGateway {
       //console.log(response);
     } catch (e) {
       //console.log(e);
-      throw new Error('');
+      throw new Error(e.response.data.detail);
     }
     console.log('code237-recover', result);
     return { email: result.email } as RecoverPasswordSendEmailResponse;
@@ -172,8 +172,7 @@ export class AuthApiGatewayHttp extends HttpProvider implements AuthApiGateway {
       result = response.data;
       console.log(response);
     } catch (e) {
-      console.log(e);
-      throw new Error('');
+      throw new Error(e.response.data.detail);
     }
 
     return {} as RecoverPasswordConfirmationResponse

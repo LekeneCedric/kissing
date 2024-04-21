@@ -14,6 +14,7 @@ import SimpleSelectComponent, {
 import useFilterMatchesModalView from './useFilterMatchesModalView';
 import SimpleInterestsSelect from '../../select/InterestsSelect/SimpleInterestsSelect';
 import Slider from '@react-native-community/slider';
+import { heightPercentageToDP } from "react-native-responsive-screen";
 
 type props = {
   isVisible: boolean;
@@ -46,7 +47,7 @@ const FilterMatchesModal = ({
   return (
     <Modal animationType={'slide'} visible={isVisible}>
       <SafeAreaView
-        style={{justifyContent: 'center', alignItems: 'center', margin: 10}}>
+        style={{justifyContent: 'center', alignItems: 'center', padding: 10, paddingBottom: 50}}>
         <View
           style={{
             flexDirection: 'row',
@@ -74,6 +75,7 @@ const FilterMatchesModal = ({
           <Text
             style={{
               fontSize: fontSizes.title,
+              fontWeight: 'bold',
               width: '100%',
               textAlign: 'center',
             }}>
@@ -81,7 +83,7 @@ const FilterMatchesModal = ({
             Filtre des profils
           </Text>
         </View>
-        <ScrollView>
+        <ScrollView style={{paddingBottom: heightPercentageToDP('5%'), width: '100%'}}>
           <View
             style={{
               flexDirection: 'column',
@@ -186,33 +188,35 @@ const FilterMatchesModal = ({
             </View>
 
           </View>
+          <View style={{marginTop: 50}} />
+          <Button
+            label={'Valider'}
+            handleClick={() => {
+              action();
+            }}
+            customStyle={{
+              isOutline: false,
+              backgroundColor: colors.principal,
+              textColor: colors.light,
+            }}
+            isLoading={false}
+          />
+          <View style={{marginTop: 20}} />
+          <Button
+            label={'Vider le filtre'}
+            handleClick={() => {
+              cleanFilterParams();
+            }}
+            customStyle={{
+              isOutline: false,
+              backgroundColor: colors.gray,
+              textColor: colors.principal,
+            }}
+            isLoading={false}
+          />
+
         </ScrollView>
-        <View style={{marginTop: 50}} />
-        <Button
-          label={'Vider le filtre'}
-          handleClick={() => {
-            cleanFilterParams();
-          }}
-          customStyle={{
-            isOutline: false,
-            backgroundColor: colors.gray,
-            textColor: colors.principal,
-          }}
-          isLoading={false}
-        />
-        <View style={{marginTop: 20}} />
-        <Button
-          label={'Valider'}
-          handleClick={() => {
-            action();
-          }}
-          customStyle={{
-            isOutline: false,
-            backgroundColor: colors.principal,
-            textColor: colors.light,
-          }}
-          isLoading={false}
-        />
+
       </SafeAreaView>
     </Modal>
   );

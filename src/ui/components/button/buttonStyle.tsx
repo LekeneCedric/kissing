@@ -13,6 +13,7 @@ const ButtonStyle = StyleSheet.create({
     borderWidth: 1,
     padding: hp('2.5%'),
     width: wp('90%'),
+    alignSelf: 'center'
   },
   inputText: {
     fontWeight: 'bold',

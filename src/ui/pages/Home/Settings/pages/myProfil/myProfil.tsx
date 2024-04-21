@@ -1,19 +1,9 @@
-import {
-  SafeAreaView,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-} from "react-native";
+import { ActivityIndicator, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import styles from "./myProfilStyle";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import icons from "../../../../../constants/icons";
 import iconSize from "../../../../../constants/iconSize";
-import {
-  heightPercentageToDP as hp,
-  widthPercentageToDP as wp,
-} from "react-native-responsive-screen";
+import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
 import colors from "../../../../../constants/colors";
 import React from "react";
 import Avatar from "../../../../../components/avatar/avatar";
@@ -23,10 +13,18 @@ import SelectComponent from "../../../../../components/select/SelectComponent/se
 import { Controller } from "react-hook-form";
 import InputArea from "../../../../../components/inputs/inputArea/inputArea";
 import InterestsSelect from "../../../../../components/select/InterestsSelect/interestsSelect";
-import Button from "../../../../../components/button/button";
-import { BASEURL } from "../../../../../routes/ApiRoutes";
 import useUploadImageProfile from "../../../../User/Profile/Complete/useUploadImageProfile";
 import { SearchType } from "../../../../../../domain/User/User.ts";
+import { LoadingState } from "../../../../../../shared/enum/LoadingState.ts";
+import {
+  GetMyUserProfileAsync
+} from "../../../../../../features/User/Thunks/GetMyUserProfile/GetMyUserProfileAsync.ts";
+import { setupMyUserProfile } from "../../../../../../features/User/UserSlice.ts";
+import {
+  GetMyUserProfileResponse
+} from "../../../../../../features/User/Thunks/GetMyUserProfile/GetMyUserProfileResponse.ts";
+import { useAppDispatch } from "../../../../../../app/hook.ts";
+
 const MyProfil = () => {
   const {
     user,
@@ -42,13 +40,14 @@ const MyProfil = () => {
     onSubmit,
     removeImage,
   } = useMyProfileView();
-  const {uploadImages} =
+  const {loading, uploadImages} =
     useUploadImageProfile();
 
   const {
     control,
     formState: { errors },
   } = form;
+  const dispatch = useAppDispatch();
   return (
     <SafeAreaView style={[styles.container, { alignItems: "center" }]}>
       <View
@@ -118,8 +117,16 @@ const MyProfil = () => {
             {
               editMode && (
                 <TouchableOpacity
-                  onPress={() => {
-                    uploadImages(true)
+                  onPress={async () => {
+                    uploadImages(true);
+                    setTimeout(async ()=>{
+                      const userDataResponse = await dispatch(GetMyUserProfileAsync({}));
+                      dispatch(
+                        setupMyUserProfile(
+                          userDataResponse.payload as GetMyUserProfileResponse,
+                        ),
+                      );
+                    },10000)
                   }}
                   style={{
                   position: 'absolute', right: 5, top: 15, padding: 2, borderRadius: 5,backgroundColor: colors.principal}}>
@@ -150,11 +157,27 @@ const MyProfil = () => {
           <Text style={styles.subTitle}>Galerie</Text>
           {editMode ? (
             <TouchableOpacity onPress={() => {
-              uploadImages(false)
+              uploadImages(false);
+              setTimeout(async ()=>{
+                const userDataResponse = await dispatch(GetMyUserProfileAsync({}));
+
+                dispatch(
+                  setupMyUserProfile(
+                    userDataResponse.payload as GetMyUserProfileResponse,
+                  ),
+                );
+              },10000)
             }} style={styles.button}>
-              <Text style={{ color: colors.light, textAlign: "center" }}>
-                Ajouter une photo
-              </Text>
+              {
+                loading === LoadingState.pending ? (
+                  <ActivityIndicator size={'small'} color={colors.light}/>
+                ): (
+                  <Text style={{ color: colors.light, textAlign: "center" }}>
+                    Ajouter une photo
+                  </Text>
+                )
+              }
+
             </TouchableOpacity>
           ) : (
             <TouchableOpacity

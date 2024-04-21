@@ -7,12 +7,14 @@ type props = {
 };
 const IsOnlineIndicator = ({isOnline}: props) => {
   return (
-    <View
-      style={[
-        styles.container,
-        {backgroundColor: isOnline ? colors.green : colors.red},
-      ]}
-    />
+    <>{
+      isOnline && <View
+        style={[
+          styles.container,
+          {backgroundColor: isOnline ? colors.green : colors.red},
+        ]}
+      />
+    }</>
   );
 };
 

@@ -46,7 +46,7 @@ const MatchesList = () => {
         <TouchableOpacity onPress={() => {}}>
           <Icon name={icons.menu} size={iconSize.normal} color={colors.light} />
         </TouchableOpacity>
-        <Text style={styles.title}>Découverte</Text>
+        <Text style={{fontSize: fontSizes.title, fontWeight: 'bold'}}>Notifications</Text>
         <TouchableOpacity
           onPress={() => {
             setFilterIsVisible(true);

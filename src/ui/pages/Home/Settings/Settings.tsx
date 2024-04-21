@@ -18,9 +18,18 @@ import useSettingsView from './useSettingsView';
 import {BASEURL} from '../../../routes/ApiRoutes';
 import { images } from "../../../constants/images.ts";
 import useNavigate from "../../../Global/hooks/useNavigation.tsx";
+import LogoutModal from "../../../components/Modals/LogoutModal/LogoutModal.tsx";
 
 const Settings = () => {
-  const {menuList, user, auth, goToMyProfile} = useSettingsView();
+  const {
+    menuList,
+    user,
+    auth,
+    goToMyProfile,
+    wantToLogout,
+    setWantToLogout,
+    logout
+  } = useSettingsView();
   const {goTo} = useNavigate();
   return (
     <SafeAreaView
@@ -35,7 +44,8 @@ const Settings = () => {
       </View>
       <TouchableOpacity
         onPress={() => {
-          goTo('galerie', {images: [{image: user.image_profile, is_main_photo: true}]})
+          console.warn(user.image_profile)
+          goTo('galerie', {images: [{image: user.image_profile, is_main_photo: true}], isGalerie: true})
         }}
       >
         <Avatar
@@ -72,6 +82,11 @@ const Settings = () => {
       <Image
         source={require('../../../../assets/logo/logo.png')}
         style={styles.logo}
+      />
+      <LogoutModal
+        isVisible={wantToLogout}
+        onClose={() => {setWantToLogout(false)}}
+        onValid={() => {logout()}}
       />
     </SafeAreaView>
   );

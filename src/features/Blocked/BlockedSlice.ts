@@ -29,13 +29,14 @@ export const BlockedSlice = createSlice(
         state.blocked = [];
       },
       AddBlockedUser: (state, {payload}: PayloadAction<UserDetail>) => {
+        console.warn('blocked', payload)
         state.blocked = [
           ...state.blocked,
           payload
         ]
       },
       RemoveBlockedUser: (state, {payload}: PayloadAction<number>) => {
-        state.blocked = state.blocked.filter(b => b.user!.id !== payload);
+        state.blocked = state.blocked.filter(b => b.id !== payload);
         state.blocked_list = state.blocked_list.filter(b => b!== payload);
       }
     },
@@ -74,6 +75,7 @@ export const BlockedSlice = createSlice(
           state.loading = LoadingState.success;
           state.blocked_list = payload.blockeds.length > 0 ? payload.blockeds.map(b => b.user?.id!): [];
           state.blocked = payload.blockeds;
+          console.warn('blocked-users', payload);
         })
     }
   }

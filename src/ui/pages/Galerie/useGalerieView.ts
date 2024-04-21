@@ -17,7 +17,8 @@ export const useGalerieView = (): useGalerieViewBehaviour => {
   };
   //@ts-ignore
   const images = route.params!.images.map(img => {
-    if (img.is_main_photo) {
+    //@ts-ignore
+    if (route.params!.isGalerie == true) {
       return {uri: img.image}
     }
     return {uri: BASEURL + img.image};

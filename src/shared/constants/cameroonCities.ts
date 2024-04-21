@@ -1,14 +1,21 @@
 const cameroonCities = [
   {label: 'Yaoundé', value: 'Yaoundé'},
   {label: 'Douala', value: 'Douala'},
-  {label: 'Garoua', value: 'Garoua'},
-  {label: 'Bamenda', value: 'Bamenda'},
+  {label: 'Edea', value: 'Edea'},
+  {label: 'Bertoua', value: 'Bertoua'},
   {label: 'Bafoussam', value: 'Bafoussam'},
-  {label: 'Maroua', value: 'Maroua'},
-  {label: 'Ngaoundéré', value: 'Ngaoundéré'},
-  {label: 'Kumba', value: 'Kumba'},
-  {label: 'Buea', value: 'Buea'},
+  {label: 'Kribi', value: 'Kribi'},
+  {label: 'Dschang', value: 'Dschang'},
   {label: 'Limbe', value: 'Limbe'},
+  {label: 'Buea', value: 'Buea'},
+  {label: 'Bamenda', value: 'Bamenda'},
+  {label: 'Mbalmayo', value: 'Mbalmayo'},
+  {label: 'Nkongsamba', value: 'Nkongsamba'},
+  {label: 'Ebolowa', value: 'Ebolowa'},
+  {label: 'Sangmelima', value: 'Sangmelima'},
+  {label: 'Ngaoundéré', value: 'Ngaoundéré'},
+  {label: 'Garoua', value: 'Garoua'},
+  {label: 'Maroua', value: 'Maroua'}
 ];
 
 export default cameroonCities;

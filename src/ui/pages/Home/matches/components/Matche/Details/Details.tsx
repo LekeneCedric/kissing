@@ -43,6 +43,8 @@ const Details = () => {
     removeToBlocked,
     in_blocked_list,
     blocked_loading,
+    profileImage,
+    otherImages
   } = useMyProfileDetails();
 
   const name = userDetails?.user?.username;
@@ -113,11 +115,11 @@ const Details = () => {
               <TouchableWithoutFeedback
                 onPress={() => {
                   images?.find(i => i.is_main_photo == true) ?
-                  navigateToGalerie(images![0]) : null;
+                  navigateToGalerie(images?.find(i => i.is_main_photo == true)) : null;
                 }}>
                 <Image
                   style={{width: '100%', height: '100%'}}
-                  source={{uri: images?.find(i => i.is_main_photo == true) ? BASEURL + images?.find(i => i.is_main_photo == true)!.image : sharedImages.default_image}}
+                  source={{uri: profileImage ? BASEURL + profileImage.image : sharedImages.default_image}}
                 />
               </TouchableWithoutFeedback>
             </View>
@@ -268,8 +270,9 @@ const Details = () => {
                   marginTop: hp('2%'),
                   marginBottom: hp('2%'),
                 }}>
-                {images!.filter(i => !i.is_main_photo).map((image, index) => {
-                  if (index < 4) {
+                {otherImages.map((image, index) => {
+
+                  if (index < 3) {
                     return (
                       <TouchableOpacity
                         onPress={() => {
@@ -281,7 +284,7 @@ const Details = () => {
                       </TouchableOpacity>
                     );
                   }
-                  if (index == 4) {
+                  if (index == 3) {
                     return <TouchableOpacity
                       onPress={() => {
                           navigateToGalerie();

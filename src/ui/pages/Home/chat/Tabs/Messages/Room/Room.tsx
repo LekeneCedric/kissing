@@ -19,6 +19,7 @@ import { BASEURL } from "../../../../../../routes/ApiRoutes.ts";
 import { images } from "../../../../../../constants/images.ts";
 import { IMessage as IMessageGiftedChat } from "react-native-gifted-chat/lib/Models";
 import useNavigate from "../../../../../../Global/hooks/useNavigation.tsx";
+import { heightPercentageToDP, widthPercentageToDP } from "react-native-responsive-screen";
 type props = {
   onSendMessage: (messages: IMessageGiftedChat[], data: {id: any, name: any, image_path: any}) => void
 }
@@ -50,6 +51,8 @@ const Room = ({onSendMessage}:props) => {
           left: {
             zIndex: 1000000,
             borderWidth: 1,
+            left:0,
+            marginLeft: -widthPercentageToDP('10%'),
             borderColor: colors.principal,
             backgroundColor: colors.light // Change the background color for incoming messages
           },
@@ -81,7 +84,7 @@ const Room = ({onSendMessage}:props) => {
   };
   return (
     <SafeAreaView style={styles.container}>
-      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingRight: 15 }}>
+      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingRight: 15, marginBottom: heightPercentageToDP('2%')}}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <TouchableOpacity onPress={() => {
             navigation.goBack();
@@ -115,9 +118,11 @@ const Room = ({onSendMessage}:props) => {
         listViewProps={{
           style: {
             flex: 1,
-            bottom: 10
+            bottom: 10,
           },
           contentContainerStyle: {
+            marginLeft: 0,
+            paddingLeft: 0,
             flexDirection: "column-reverse",
           }
         }}

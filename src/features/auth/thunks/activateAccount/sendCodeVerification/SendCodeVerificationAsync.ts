@@ -20,7 +20,9 @@ export const SendCodeVerificationAsync = createAsyncThunk<
       );
     } catch (error) {
       const err = error as any;
-      const result: any = {};
+      const result: any = {
+        message: err
+      };
       return thunkApi.rejectWithValue(result);
     }
   },
