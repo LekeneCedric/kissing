@@ -36,7 +36,7 @@ const SimpleInterestsSelect = ({data}: props) => {
           marginBottom: 5,
         }}>
         {' '}
-        Ces centres d'intérêts
+        Ses centres d'intérêts
       </Text>
       {loading == LoadingState.pending ? (
         <ActivityIndicator size={iconSize.normal} color={colors.principal} />
